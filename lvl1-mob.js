@@ -11,6 +11,8 @@ function lvl1(io){
 	this.cHeight = io.canvas.height;
 	this.cWidth = io.canvas.width;
 	this.imgPath = 'img/';
+	this.loadResources = 0;
+	this.totalResources = 5
 		
 	//KILL VARS
 	this.killList = [];
@@ -45,7 +47,7 @@ function lvl1(io){
 	this.gameOver = false;
 	this.gameWin = false;
 
-	     
+	this.loadResources++;     
 }; iio.lvl1 = lvl1;
 
 //Setup world
@@ -66,7 +68,7 @@ lvl1.prototype.setup = function(){
 
 	//SET IMAGE PATH
 	this.io.setBGImage(this.imgPath+'bg.gif');
-	
+	this.loadResources++;  
 	//DEFINE WORLD FIXTURE
 	var fixDef = new b2FixtureDef;
 	fixDef.friction = 0.3;
@@ -133,18 +135,18 @@ lvl1.prototype.setup = function(){
 		new b2Vec2(100/PTM, 0/PTM),
 	]);
 	bodyDef.position.Set((this.cWidth/PTM)-fixDef.shape.width,(this.cHeight+fixDef.shape.height)/PTM); 
-	this.prepShape(bodyDef, fixDef).addImage(this.imgPath+'crate.png');
+	this.prepShape(bodyDef, fixDef).addImage(this.imgPath+'crate.png',function() {this.loadResources++});
 	
 	//GROUND LEFT
 	fixDef.shape.SetAsBox(250/PTM,fixDef.shape.height);
 	bodyDef.position.Set(50/PTM,this.cHeight/PTM-fixDef.shape.height);
-	this.prepShape(bodyDef, fixDef).addImage(this.imgPath+'crate.png');
+	this.prepShape(bodyDef, fixDef).addImage(this.imgPath+'crate.png',function() {this.loadResources++});
 		
 	//RAMP
 	bodyDef.angle=-Math.PI/4;
 	fixDef.shape.SetAsBox(20/PTM,20/PTM);
 	bodyDef.position.Set(300/PTM,(this.cHeight-30)/PTM);
-	this.prepShape(bodyDef, fixDef).addImage(this.imgPath+'crate.png');
+	this.prepShape(bodyDef, fixDef).addImage(this.imgPath+'crate.png',function() {this.loadResources++});
 	
 	bodyDef.angle=0;
 	fixDef.userData = undefined;
@@ -222,7 +224,7 @@ lvl1.prototype.setup = function(){
 	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.height,499/PTM);
 	
 		
-	this.prepShape(bodyDef, fixDef).addImage('img/block.png');
+	this.prepShape(bodyDef, fixDef).addImage('img/block.png',function() {this.loadResources++;});
 	
 	//console.log('current pos = ' + bodyDef.position.y*PTM);
 	//	console.log('current height = ' + fixDef.shape.height*PTM);
@@ -232,7 +234,7 @@ lvl1.prototype.setup = function(){
 	fixDef.userData = undefined;
 	fixDef.shape.SetAsBox(20/PTM,40/PTM);
 	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.height,230/PTM);
-	this.prepShape(bodyDef, fixDef).addImage('img/block.png');
+	this.prepShape(bodyDef, fixDef).addImage('img/block.png',function() {this.loadResources++});
 
 	
 	fixDef.isSensor = false;
@@ -244,8 +246,9 @@ lvl1.prototype.setup = function(){
 	//INIT GUI
 	this.updateKills();
 	this.updateScore();
-
-
+	
+	this.loadResources++;
+		console.log(this.loadResources);
 }
 
 //CREATE A CAR
@@ -329,11 +332,25 @@ lvl1.prototype.timer = function(){
     
     this.timerText.setText('Time '+ Math.round(this.elapsed) + ' / ' + this.timeOut)   
 };
-
-
+lvl1.prototype.kill = function(){
+	if(this.killList.length){
+		for (var i = 0, l = this.killList.length; i < l; ++i) {
+			//lio.rmvObj(this.killList[i]);
+			//console.log(this.killList[i]);
+		   	//world.DestroyBody(this.killList[i]);
+		    //this.io.rmvObj('carObj',this.killList[i]);
+		    this.io.rmvFromGroup('carObj',this.killList[i]);
+		    if(i != -1) {
+		    	
+		    	this.killList.splice(i, 1);
+		    }
+		}
+	}
+}
 lvl1.prototype.step = function(){
 
 	this.timer();
+	this.kill();
 	var lio = this;
 
 	//CREATE RANDOM CARS
@@ -349,16 +366,7 @@ lvl1.prototype.step = function(){
 			this.movers[i].SetLinearVelocity(new b2Vec2(lio.spawnSpeed,0));
 		}
 	}
-	//KILL CARS
-	if(lio.killList.length){
-		for (var i = 0, l = this.killList.length; i < l; ++i) {
-			//lio.rmvObj(this.killList[i]);
-		    world.DestroyBody(this.killList[i]);
-		    if(i != -1) {
-		    	lio.killList.splice(i, 1);
-		    }
-		}
-	}
+	
 	
 	if(this.elapsed > this.timeOut){
 		lio.gameOver = true;

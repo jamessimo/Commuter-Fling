@@ -54,34 +54,33 @@ function GameControl(io) {
 		
 	//if(level){
 	io.setB2Framerate(60, function(){
-
 		if(gameOn){
 			if(level.gameOver==true){
 				gameOn = false;
 			  	//SHOW GAME OVER TEXT
-				io.addObj((new iio.Text('Game Over :(',iio.Vec.add(io.canvas.width/2,io.canvas.height/2,0,0)))
+				io.addToGroup('MENU',(new iio.Text('Game Over :(',iio.Vec.add(io.canvas.width/2,io.canvas.height/2,0,0)))
 				      .setFont('60px Courier New')
 				      .setTextAlign('center')
-				      .setFillStyle('white'));
+				      .setFillStyle('white'),20);
 				      
 				//SHOW GAMEOVER BUTTON      		      
-			   	btn = io.addObj(new iio.Rect(io.canvas.width/2,io.canvas.height/2 + 100, 160, 40)
-			      .setFillStyle('#00baff'));
-			    btn.text = io.addObj(new iio.Text('Restart',btn.pos)
+			   	btn = io.addToGroup('MENU',new iio.Rect(io.canvas.width/2,io.canvas.height/2 + 100, 160, 40)
+			      .setFillStyle('#00baff'),20);
+			    btn.text = io.addToGroup('MENU', new iio.Text('Restart',btn.pos)
 			                  .setFont('26px Consolas')
 			                  .translate(0,8)
 			                  .setTextAlign('center')
-			                  .setFillStyle('white'));
+			                  .setFillStyle('white'),20);
 				  		
 				io.pauseB2World(true);
 				io.pauseFramerate(true);
 			}
 			else if(level.gameWin==true){
 				gameOn = false;
-				io.addObj((new iio.Text('WINNAR :)',iio.Vec.add(io.canvas.width/2,io.canvas.height/2,0,0)))
+				io.addToGroup('MENU',(new iio.Text('WINNAR :)',iio.Vec.add(io.canvas.width/2,io.canvas.height/2,0,0)))
 				      .setFont('60px Courier New')
 				      .setTextAlign('center')
-				      .setFillStyle('yellow'));
+				      .setFillStyle('yellow'),20);
 				
 				io.pauseB2World(true);
 				io.pauseFramerate(true);
@@ -106,7 +105,7 @@ function GameControl(io) {
 		     md.target.Set(mouseX, mouseY);
 		     md.collideConnected = true;
 		     md.maxForce = 600.0 * body.GetMass();
-		     mouseJoint = io.addObj(world.CreateJoint(md).prepGraphics().setStrokeStyle('white').setLineWidth(1));
+		     mouseJoint = io.addToGroup('MOUSEJOINT',world.CreateJoint(md).prepGraphics().setStrokeStyle('white').setLineWidth(1));
 		     body.SetAwake(true);
 		  }
 		}
@@ -220,23 +219,25 @@ function GameControl(io) {
 };
 
 function intro(io){
+	
+	io.setBGColor('black');
 
 	//SHOW GAME OVER TEXT
-	io.addObj((new iio.Text('Commuter Fling!',iio.Vec.add(io.canvas.width/2,io.canvas.height/2,0,0)))
+	io.addToGroup('MENU',(new iio.Text('Commuter Fling!',iio.Vec.add(io.canvas.width/2,io.canvas.height/2,0,0)))
 	      .setFont('60px Courier New')
 	      .setTextAlign('center')
-	      .setFillStyle('white'));
+	      .setFillStyle('white'),20);
 	      
 	//SHOW START BUTTON      		      
 	btn = io.addObj(new iio.Rect(io.canvas.width/2,io.canvas.height/2 + 100, 160, 40)
 	  .setFillStyle('#00baff'));
 	
 	
-	btn.text = io.addObj(new iio.Text('Start',btn.pos)
+	btn.text = io.addToGroup('MENU',new iio.Text('Start',btn.pos)
 	              .setFont('26px Consolas')
 	              .translate(0,8)
 	              .setTextAlign('center')
-	              .setFillStyle('white'));
+	              .setFillStyle('white'),20);
 	              
 	//  gameOn = false;
       
