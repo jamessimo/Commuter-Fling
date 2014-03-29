@@ -48,10 +48,7 @@ function GameControl(io) {
 	//io.context.scale(0.9,0.9);
 	io.activateDebugger();
 	//level = io.activateLevel1();
-	//level.setup(io);
-	
-	console.log(io);
-		
+	//level.setup(io);		
 
 	io.setB2Framerate(60, function(){
 		if(gameOn){
@@ -93,7 +90,6 @@ function GameControl(io) {
 		     mouseJoint = null;
 		  }
 		}
-		
     });
 
 	
@@ -149,8 +145,8 @@ function GameControl(io) {
     }
     
     function touchMove(e){
-    	mouseX = (e.touches[0].pageX / 30)*scaleX;
-    	mouseY = (e.touches[0].pageY / 30)*scaleY;
+    	mouseX = (e.touches[0].pageX) / 30*scaleX;
+    	mouseY = (e.touches[0].pageY) / 30*scaleY;
     }
     
     function pause(){
@@ -163,12 +159,11 @@ function GameControl(io) {
 	io.canvas.addEventListener('touchstart', function(e){
 		touchStart(e);
 		var newPos = io.getEventPosition(e);
-		newPos.x = io.getEventPosition(e).x*scaleX;
-		newPos.y = io.getEventPosition(e).y*scaleY;
+		newPos.x = e.touches[0].pageX*scaleX;
+		newPos.y = e.touches[0].pageY*scaleY;
 		if (btn && btn.contains(newPos)){
 			createWorld(io);
 		}
-		
 	});
 	io.canvas.addEventListener('touchmove', touchMove);
 	io.canvas.addEventListener('touchend', touchEnd);
