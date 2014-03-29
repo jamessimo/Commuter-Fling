@@ -249,7 +249,7 @@ function createWorld(io){
 		world = null;
 		
 	io.rmvAll();
-		    
+	btn = undefined;    
     //create the box2d world
 	world = io.addB2World(new b2World(
     new b2Vec2(0, 30)    //gravity
