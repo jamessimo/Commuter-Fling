@@ -37,7 +37,7 @@ function lvl1(io){
 	this.elapsed = 0.0;
 	
 	//GAME VARS
-	this.spawnSpeed = 90;
+	this.spawnSpeed = 3;
 	this.carCount = 0;
 	this.carColors = ['red','blue','yellow'];
 	this.winAmmount = 4; 
@@ -46,6 +46,8 @@ function lvl1(io){
 	this.movers = [];
 	this.gameOver = false;
 	this.gameWin = false;
+	
+	this.blocker = undefined;
 
 	this.loadResources++;     
 }; iio.lvl1 = lvl1;
@@ -213,6 +215,7 @@ lvl1.prototype.setup = function(){
 	fixDef.userData = undefined;
 	fixDef.shape.SetAsBox(20/PTM,70/PTM);
 	
+	
 	/*fixDef.shape.SetAsArray([
 		new b2Vec2(-20/PTM, -70/PTM), //Top-Left
 		new b2Vec2(20/PTM, 70/PTM),
@@ -235,8 +238,20 @@ lvl1.prototype.setup = function(){
 	fixDef.shape.SetAsBox(20/PTM,40/PTM);
 	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.height,230/PTM);
 	this.prepShape(bodyDef, fixDef).addImage('img/block.png',function() {this.loadResources++});
+	
+	
+	//MOVING WALL
+	/*bodyDef.type = b2Body.b2_kinematicBody;
+	fixDef.isSensor = false;
+	fixDef.userData = 'blocker';
+	fixDef.shape.SetAsBox(20/PTM,40/PTM);
+	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.width,230/PTM);
+	
+	this.blocker = this.prepShape(bodyDef, fixDef).addImage('img/block.png',function() {this.loadResources++});
 
 	
+	console.log(this.blocker);
+	*/
 	fixDef.isSensor = false;
 	fixDef.userData = undefined;
 			
@@ -352,7 +367,10 @@ lvl1.prototype.step = function(){
 	this.timer();
 	this.kill();
 	var lio = this;
-
+	
+	//MOVE BLOCKER
+	//this.blocker.position.x += 1;
+	
 	//CREATE RANDOM CARS
 	if (this.carCount < this.MAX_CARS && Math.random()<.03){
 		if (Math.random()<.2){
@@ -438,7 +456,7 @@ lvl1.prototype.step = function(){
 			
 			//lio.createCar.call(-100/PTM,(lio.cHeight - 100)/PTM,'red');
 			setTimeout(function() {
-				lio.createCar(-100/PTM,100/PTM);
+				lio.createCar(-100/PTM,(lio.cHeight - 100)/PTM);
 			}, 0);
 
 		}

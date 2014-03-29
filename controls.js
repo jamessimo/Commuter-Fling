@@ -52,39 +52,14 @@ function GameControl(io) {
 	
 	console.log(io);
 		
-	//if(level){
+
 	io.setB2Framerate(60, function(){
 		if(gameOn){
 			if(level.gameOver==true){
-				gameOn = false;
-			  	//SHOW GAME OVER TEXT
-				io.addToGroup('MENU',(new iio.Text('Game Over :(',iio.Vec.add(io.canvas.width/2,io.canvas.height/2,0,0)))
-				      .setFont('60px Courier New')
-				      .setTextAlign('center')
-				      .setFillStyle('white'),20);
-				      
-				//SHOW GAMEOVER BUTTON      		      
-			   	btn = io.addToGroup('MENU',new iio.Rect(io.canvas.width/2,io.canvas.height/2 + 100, 160, 40)
-			      .setFillStyle('#00baff'),20);
-			    btn.text = io.addToGroup('MENU', new iio.Text('Restart',btn.pos)
-			                  .setFont('26px Consolas')
-			                  .translate(0,8)
-			                  .setTextAlign('center')
-			                  .setFillStyle('white'),20);
-				  		
-				io.pauseB2World(true);
-				io.pauseFramerate(true);
+				gameOver(io);
 			}
 			else if(level.gameWin==true){
-				gameOn = false;
-				io.addToGroup('MENU',(new iio.Text('WINNAR :)',iio.Vec.add(io.canvas.width/2,io.canvas.height/2,0,0)))
-				      .setFont('60px Courier New')
-				      .setTextAlign('center')
-				      .setFillStyle('yellow'),20);
-				
-				io.pauseB2World(true);
-				io.pauseFramerate(true);
-			
+				winGame(io);
 			}else{
 				level.step();
 			}
@@ -120,7 +95,7 @@ function GameControl(io) {
 		}
 		
     });
-//	}
+
 	
     function getB2BodyAt(callback,v,y) {
     	if(world){
@@ -201,7 +176,6 @@ function GameControl(io) {
 	//CLICK EVENTS
 	io.canvas.addEventListener('mousemove', mouseMove);         
 	io.canvas.addEventListener('mouseup', mouseUp);
-	
 	io.canvas.addEventListener('mousedown', function(e){
 		mouseDown(e);
 		var newPos = io.getEventPosition(e);
@@ -218,27 +192,59 @@ function GameControl(io) {
     
 };
 
+function winGame(io){
+	gameOn = false;
+	io.addToGroup('MENU',(new iio.Text('WINNAR :)',iio.Vec.add(io.canvas.width/2,io.canvas.height/2,0,0)))
+		.setFont('60px Courier New')
+		.setTextAlign('center')
+		.setFillStyle('yellow'),20);
+		
+	io.pauseB2World(true);
+	io.pauseFramerate(true);
+
+}
+function gameOver(io){
+	gameOn = false;
+	//SHOW GAME OVER TEXT
+	io.addToGroup('MENU',(new iio.Text('Game Over :(',iio.Vec.add(io.canvas.width/2,io.canvas.height/2,0,0)))
+		.setFont('60px Courier New')
+		.setTextAlign('center')
+		.setFillStyle('white'),20);
+	  
+	//SHOW GAMEOVER BUTTON      		      
+	btn = io.addToGroup('MENU',new iio.Rect(io.canvas.width/2,io.canvas.height/2 + 100, 160, 40)
+	.setFillStyle('#00baff'),20);
+	btn.text = io.addToGroup('MENU', new iio.Text('Restart',btn.pos)
+		.setFont('26px Consolas')
+		.translate(0,8)
+		.setTextAlign('center')
+		.setFillStyle('white'),20);
+		
+	io.pauseB2World(true);
+	io.pauseFramerate(true);
+}
+
 function intro(io){
 	
 	io.setBGColor('black');
 
 	//SHOW GAME OVER TEXT
 	io.addToGroup('MENU',(new iio.Text('Commuter Fling!',iio.Vec.add(io.canvas.width/2,io.canvas.height/2,0,0)))
-	      .setFont('60px Courier New')
-	      .setTextAlign('center')
-	      .setFillStyle('white'),20);
+		.setFont('60px Courier New')
+		.setTextAlign('center')
+		.setFillStyle('white'),20);
 	      
 	//SHOW START BUTTON      		      
 	btn = io.addObj(new iio.Rect(io.canvas.width/2,io.canvas.height/2 + 100, 160, 40)
-	  .setFillStyle('#00baff'));
+		.setFillStyle('#00baff'));
 	
 	
 	btn.text = io.addToGroup('MENU',new iio.Text('Start',btn.pos)
-	              .setFont('26px Consolas')
-	              .translate(0,8)
-	              .setTextAlign('center')
-	              .setFillStyle('white'),20);
-	              
+		.setFont('26px Consolas')
+		.translate(0,8)
+		.setTextAlign('center')
+		.setFillStyle('white'),20);
+      
 	//  gameOn = false;
       
 }
