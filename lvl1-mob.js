@@ -256,7 +256,7 @@ lvl1.prototype.setup = function(){
 	fixDef.userData = undefined;
 			
 	//CREATE INITAL CAR
-	this.createCar(-100/PTM,(this.cHeight - 100)/PTM,this.carColors[1]);
+	this.createCar(-100/PTM,(this.cHeight - 200)/PTM,this.carColors[1]);
 	
 	//INIT GUI
 	this.updateKills();
@@ -456,7 +456,7 @@ lvl1.prototype.step = function(){
 			
 			//lio.createCar.call(-100/PTM,(lio.cHeight - 100)/PTM,'red');
 			setTimeout(function() {
-				lio.createCar(-100/PTM,(lio.cHeight - 100)/PTM);
+				lio.createCar(-100/PTM,(lio.cHeight - 200)/PTM);
 			}, 0);
 
 		}
