@@ -41,7 +41,7 @@ function GameControl(io) {
 	intro(io);
 	//createWorld(io);
 	
-	canvasOffset.x = 100;
+	canvasOffset.x = 0;
 	canvasOffset.y = 0;
 	
 	io.context.translate(canvasOffset.x, canvasOffset.y);
