@@ -53,7 +53,7 @@ POSSIBILITY OF SUCH DAMAGE.
 		this.section.style.zIndex=100;
 		this.section.style.backgroundColor='rgba(0,0,0,0.2)';
 		this.section.style.padding=5+'px';
-		this.section.style.fontFamily="Calibri";
+		this.section.style.fontFamily="Consolas, Andale Mono, monospace";
 		this.section.style.color="#f8f8f8";
 		this.section.style.maxWidth=202+'px';
 		this.section.style.maxHeight=io.canvas.height-20+'px';

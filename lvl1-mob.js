@@ -48,8 +48,15 @@ function lvl1(io){
 	this.gameWin = false;
 	
 	this.blocker = undefined;
+	this.blockerDirection = 'down';
+	this.blockerBodyDef = new b2BodyDef;
+	this.blockerFixDef = new b2FixtureDef;
 
-	this.loadResources++;     
+	this.doorStop = undefined;
+	
+	
+	this.loadResources++;  
+	   
 }; iio.lvl1 = lvl1;
 
 //Setup world
@@ -69,7 +76,7 @@ lvl1.prototype.setup = function(){
 	goal.prototype.color = '';*/
 
 	//SET IMAGE PATH
-	this.io.setBGImage(this.imgPath+'bg.gif');
+	this.io.setBGImage(this.imgPath+'bg.gif',true);
 	this.loadResources++;  
 	//DEFINE WORLD FIXTURE
 	var fixDef = new b2FixtureDef;
@@ -169,6 +176,17 @@ lvl1.prototype.setup = function(){
 	fixDef.userData = 'door';
 	bodyDef.position.Set(0/PTM, (this.cHeight-80)/PTM);
 	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(255,0,255,.8)');
+	
+	//HOPPER DOOR STOP //LEFT
+	fixDef.shape.SetAsBox(1/PTM,40/PTM);
+	fixDef.userData = 'doorstop';
+	bodyDef.position.Set(1/PTM, (this.cHeight-80)/PTM);
+	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(255,255,255,.8)');
+	//this.doorStop = this.io.addObj(world.CreateBody(bodyDef)).CreateFixture(fixDef);
+	//this.doorStop.GetShape().prepGraphics(this.io.b2Scale)
+	  //   .setFillStyle('rgba(255,255,255,.8)');
+	
+		
 		
 	fixDef.userData = undefined;
 	
@@ -215,7 +233,6 @@ lvl1.prototype.setup = function(){
 	fixDef.userData = undefined;
 	fixDef.shape.SetAsBox(20/PTM,70/PTM);
 	
-	
 	/*fixDef.shape.SetAsArray([
 		new b2Vec2(-20/PTM, -70/PTM), //Top-Left
 		new b2Vec2(20/PTM, 70/PTM),
@@ -226,7 +243,6 @@ lvl1.prototype.setup = function(){
 	//console.log(fixDef.shape);
 	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.height,499/PTM);
 	
-		
 	this.prepShape(bodyDef, fixDef).addImage('img/block.png',function() {this.loadResources++;});
 	
 	//console.log('current pos = ' + bodyDef.position.y*PTM);
@@ -241,17 +257,27 @@ lvl1.prototype.setup = function(){
 	
 	
 	//MOVING WALL
-	/*bodyDef.type = b2Body.b2_kinematicBody;
-	fixDef.isSensor = false;
-	fixDef.userData = 'blocker';
-	fixDef.shape.SetAsBox(20/PTM,40/PTM);
-	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.width,230/PTM);
+	this.blockerBodyDef.type = b2Body.b2_kinematicBody;
+	this.blockerFixDef.shape =  new b2PolygonShape;
+	this.blockerFixDef.isSensor = false;
+	this.blockerFixDef.userData = 'blocker';
+	this.blockerFixDef.shape.SetAsBox(20/PTM,40/PTM);
+	this.blockerBodyDef.position.Set(this.cWidth/PTM-fixDef.shape.width,230/PTM);
 	
-	this.blocker = this.prepShape(bodyDef, fixDef).addImage('img/block.png',function() {this.loadResources++});
-
-	
-	console.log(this.blocker);
-	*/
+	//this.blocker = this.prepShape(this.blockerBodyDef, this.blockerFixDef).addImage('img/block.png',function() {this.loadResources++});
+	this.blocker = this.io.addObj(world.CreateBody(this.blockerBodyDef)).CreateFixture(this.blockerFixDef);
+    
+   	this.blocker.GetBody().SetLinearVelocity(new b2Vec2(0,3));
+    this.blocker.GetShape().prepGraphics(this.io.b2Scale)
+         .setFillStyle('rgba(0,186,255,.4)')
+         .setStrokeStyle('white').addImage('img/block.png',function() {this.loadResources++});
+         
+    
+    	    	     
+	// console.log(this.blocker);
+	//	console.log(this.blockerFixDef);
+	//	console.log(this.blockerBodyDef);
+		
 	fixDef.isSensor = false;
 	fixDef.userData = undefined;
 			
@@ -310,13 +336,14 @@ lvl1.prototype.randomColor = function(){
 };
 //HELPER TO ADD BOX2D/IO OBJECTS
 lvl1.prototype.prepShape = function(bodyDef, fixDef,group,zIndex){
-//io.addToGroup('GUI', new iio.Text('',300,this.cHeight-30)
+	//io.addToGroup('GUI', new iio.Text('',300,this.cHeight-30)
 	if(!group){
 		group = 'worldObj';
 	}
 	if(!zIndex){
-	zIndex = 0;
+		zIndex = 0;
 	}
+
 	return  this.io.addToGroup(group,world.CreateBody(bodyDef),zIndex)
 	        .CreateFixture(fixDef)
 	        .GetShape()
@@ -356,7 +383,6 @@ lvl1.prototype.kill = function(){
 		    //this.io.rmvObj('carObj',this.killList[i]);
 		    this.io.rmvFromGroup('carObj',this.killList[i]);
 		    if(i != -1) {
-		    	
 		    	this.killList.splice(i, 1);
 		    }
 		}
@@ -368,9 +394,18 @@ lvl1.prototype.step = function(){
 	this.kill();
 	var lio = this;
 	
-	//MOVE BLOCKER
-	//this.blocker.position.x += 1;
 	
+	//console.log(this.blocker.GetBody().m_fx.position.x);
+		
+	//var moveB = this.blocker.GetBody();
+	
+	//console.log(moveB.m_xf.position.x);
+
+		//MOVE BLOCKER
+	/*this.blocker.m_vertices[0].y += 0.1;
+	this.blocker.m_vertices[1].y += 0.1;
+	this.blocker.m_vertices[2].y += 0.1;
+	this.blocker.m_vertices[3].y += 0.1;*/
 	//CREATE RANDOM CARS
 	if (this.carCount < this.MAX_CARS && Math.random()<.03){
 		if (Math.random()<.2){
@@ -378,13 +413,19 @@ lvl1.prototype.step = function(){
 			//lio.createCar(-100/PTM,(lio.cHeight - 100)/PTM,carColor);
 		}
 	}
-	//MOVE
+	//MOVE CARS
 	if(lio.movers.length){
 		for (var i = 0, l = this.movers.length; i < l; ++i) {
 			this.movers[i].SetLinearVelocity(new b2Vec2(lio.spawnSpeed,0));
 		}
 	}
-	
+
+	//MOVE BLOCKER
+	if(lio.blocker.GetBody().m_xf.position.y*PTM > lio.cHeight){
+		lio.blocker.GetBody().SetLinearVelocity(new b2Vec2(0,-3));
+	}else if(lio.blocker.GetBody().m_xf.position.y*PTM < 0){
+		lio.blocker.GetBody().SetLinearVelocity(new b2Vec2(0,3));	
+	}
 	
 	if(this.elapsed > this.timeOut){
 		lio.gameOver = true;
@@ -402,11 +443,21 @@ lvl1.prototype.step = function(){
 		var moverX = 0;
 		var doorX = 0;
 		
+		if (fixtureB.GetUserData()=="doorstop") {
+					moverX = fixtureA.GetBody().GetPosition().x*PTM;
+					doorX = fixtureB.GetBody().GetPosition().x*PTM;
+		
+					if (moverX < fixtureA.GetShape().width/2-5) {
+						contact.SetEnabled(false);
+					}
+				}	
+		
+		
 		if (fixtureB.GetUserData()=="door") {
 			moverX = fixtureA.GetBody().GetPosition().x*PTM;
 			doorX = fixtureB.GetBody().GetPosition().x*PTM;
 
-			if (moverX < fixtureA.GetShape().width/2) {
+			if (moverX < fixtureA.GetShape().width/2-5) {
 				contact.SetEnabled(false);
 			}
 		}	
@@ -455,10 +506,11 @@ lvl1.prototype.step = function(){
 			//var boundGetX = getX.bind(module);
 			
 			//lio.createCar.call(-100/PTM,(lio.cHeight - 100)/PTM,'red');
-			setTimeout(function() {
-				lio.createCar(-100/PTM,(lio.cHeight - 200)/PTM);
-			}, 0);
-
+			//if(lio.movers && lio.movers.length){
+				setTimeout(function() {
+					lio.createCar(-100/PTM,(lio.cHeight - 200)/PTM);
+				}, 100);
+			//}
 		}
 	}
 }

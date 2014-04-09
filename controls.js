@@ -31,11 +31,16 @@ var level = undefined;
 
 var gameOn = false;
 function GameControl(io) {
-
+	
 	var scaleX = io.canvas.width / window.innerWidth;
 	var scaleY = io.canvas.height / window.innerHeight;
 	var scaleToFit = Math.min(scaleX, scaleY);
-	 
+	
+	this.onResize = function(event){
+		scaleX = io.canvas.width / window.innerWidth;
+		scaleY = io.canvas.height / window.innerHeight;
+		scaleToFit = Math.min(scaleX, scaleY);
+	};
 	 
 	io.addB2World(world);
 	intro(io);
@@ -65,7 +70,7 @@ function GameControl(io) {
 		
 		if(mouseX > io.canvas.width/2/PTM){
 		//KILL BOX2D CLICK IF MORE THAN HALF THE SCREEN
-		 isMouseDown = false;
+		// isMouseDown = false;
 		}
 		
 		if(isMouseDown && (!mouseJoint) && world) {
@@ -90,6 +95,7 @@ function GameControl(io) {
 		     mouseJoint = null;
 		  }
 		}
+		meter.tick();
     });
 
 	

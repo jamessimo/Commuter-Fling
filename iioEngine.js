@@ -2859,8 +2859,8 @@ var iio = {};
       return this;
    }
    AppManager.prototype.setBGImage = function(src,scaled,c){
-      if (iio.isNumber(scaled)) c=scaled;
-      else c=c||0;
+     /* if (iio.isNumber(scaled)) c=scaled;
+      else*/ c=c||0;
       if (scaled){
          this.cnvs[c].style.backgroundRepeat="no-repeat";
          this.cnvs[c].style.background='url(images/bg.jpg) no-repeat center center fixed'; 
