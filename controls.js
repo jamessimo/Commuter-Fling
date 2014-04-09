@@ -31,7 +31,9 @@ var level = undefined;
 
 var gameOn = false;
 function GameControl(io) {
-	
+
+	var meter = new FPSMeter({heat:1,left: '200px' , graph: 1, theme: 'colorful'});
+		
 	var scaleX = io.canvas.width / window.innerWidth;
 	var scaleY = io.canvas.height / window.innerHeight;
 	var scaleToFit = Math.min(scaleX, scaleY);
