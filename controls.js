@@ -25,15 +25,17 @@ var   b2Vec2 = Box2D.Common.Math.b2Vec2
 ,   b2AABB = Box2D.Collision.b2AABB;
 
 var PTM = 30;
+var FPS = 60;
 var world = new b2World(new b2Vec2(0, 0),true);
 var listener = new b2Listener;
 var level = undefined;
 
 var gameOn = false;
+var PIXEL_RATIO = 1;
 function GameControl(io) {
 
-	var meter = new FPSMeter({heat:1,left: '200px' , graph: 1, theme: 'colorful'});
-		
+	var meter = new FPSMeter({heat:1,left: io.canvas.width/2+'px' , graph: 1, theme: 'colorful'});	
+
 	var scaleX = io.canvas.width / window.innerWidth;
 	var scaleY = io.canvas.height / window.innerHeight;
 	var scaleToFit = Math.min(scaleX, scaleY);
@@ -43,8 +45,49 @@ function GameControl(io) {
 		scaleY = io.canvas.height / window.innerHeight;
 		scaleToFit = Math.min(scaleX, scaleY);
 	};
+
+	PIXEL_RATIO = (function () {
+	    var ctx = io.context,
+	        dpr = window.devicePixelRatio || 1,
+	        bsr = ctx.webkitBackingStorePixelRatio ||
+	              ctx.mozBackingStorePixelRatio ||
+	              ctx.msBackingStorePixelRatio ||
+	              ctx.oBackingStorePixelRatio ||
+	              ctx.backingStorePixelRatio || 1;
+	
+	    return dpr / bsr;
+	})();
+	
+	
+	createHiDPICanvas = function(w, h, ratio) {
+	    if (!ratio) { ratio = PIXEL_RATIO; }
+	    var can = io.canvas;
+	    can.width = w * ratio;
+	    can.height = h * ratio;
+	    can.style.width = w + "px";
+	    can.style.height = h + "px";
+	    can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
+	    return can;
+	}
+	
+	 //Debugging 
+	scaleX = scaleY = 1;
+	//PIXEL_RATIO = 1;
+
+	createHiDPICanvas(1024, 768);
+	io.canvas.width = 1024*PIXEL_RATIO;
+	io.canvas.height = 768*PIXEL_RATIO;
+	
+	
+
+
+	//io.canvas.style.width=1024;
+	//io.canvas.style.height=768;
+	
+	
 	 
 	io.addB2World(world);
+	
 	intro(io);
 	//createWorld(io);
 	
@@ -53,11 +96,11 @@ function GameControl(io) {
 	
 	io.context.translate(canvasOffset.x, canvasOffset.y);
 	//io.context.scale(0.9,0.9);
-	io.activateDebugger();
+	//io.activateDebugger();
 	//level = io.activateLevel1();
 	//level.setup(io);		
 
-	io.setB2Framerate(60, function(){
+	io.setB2Framerate(FPS, function(){
 		if(gameOn){
 			if(level.gameOver==true){
 				gameOver(io);
@@ -97,7 +140,10 @@ function GameControl(io) {
 		     mouseJoint = null;
 		  }
 		}
+						TWEEN.update();
+		
 		meter.tick();
+		
     });
 
 	
@@ -148,13 +194,13 @@ function GameControl(io) {
     
     
     function mouseMove(e){
-      	mouseX = (io.getEventPosition(e).x) / 30*scaleX; //xy if absolue, xx if relative. 
-       	mouseY = (io.getEventPosition(e).y) / 30*scaleY; 
+      	mouseX = ((io.getEventPosition(e).x) / PTM*scaleX)*PIXEL_RATIO; //xy if absolue, xx if relative. 
+       	mouseY = ((io.getEventPosition(e).y) / PTM*scaleY)*PIXEL_RATIO; 
     }
     
     function touchMove(e){
-    	mouseX = (e.touches[0].pageX) / 30*scaleX;
-    	mouseY = (e.touches[0].pageY) / 30*scaleY;
+    	mouseX = (e.touches[0].pageX) / PTM*scaleX*PIXEL_RATIO;
+    	mouseY = (e.touches[0].pageY) / PTM*scaleY*PIXEL_RATIO;
     }
     
     function pause(){
@@ -182,8 +228,8 @@ function GameControl(io) {
 	io.canvas.addEventListener('mousedown', function(e){
 		mouseDown(e);
 		var newPos = io.getEventPosition(e);
-		newPos.x = io.getEventPosition(e).x*scaleX;
-		newPos.y = io.getEventPosition(e).y*scaleY;
+		newPos.x = io.getEventPosition(e).x*scaleX*PIXEL_RATIO;
+		newPos.y = io.getEventPosition(e).y*scaleY*PIXEL_RATIO;
         if (btn && btn.contains(newPos)){
         	createWorld(io);
         }
@@ -208,6 +254,8 @@ function winGame(io){
 }
 function gameOver(io){
 	gameOn = false;
+	
+	
 	//SHOW GAME OVER TEXT
 	io.addToGroup('MENU',(new iio.Text('Game Over :(',iio.Vec.add(io.canvas.width/2,io.canvas.height/2,0,0)))
 		.setFont('60px Courier New')
@@ -229,25 +277,43 @@ function gameOver(io){
 
 function intro(io){
 	
-	io.setBGColor('black');
+	io.setBGColor('#ccc');
 
-	//SHOW GAME OVER TEXT
-	io.addToGroup('MENU',(new iio.Text('Commuter Fling!',iio.Vec.add(io.canvas.width/2,io.canvas.height/2,0,0)))
-		.setFont('60px Courier New')
+	/*var topCurtain = io.addToGroup('UIEFFECTS',(new iio.Rect(io.canvas.width/2,0,io.canvas.width,1))
+	.setFillStyle('rgba(0,0,0,0.5)'),20);*/
+
+
+	//SHOW LOGO
+	var logo = io.addToGroup('MENU',(new iio.Text('Commuter Fling!',iio.Vec.add(io.canvas.width,0,0,0)))
+		.setFont(60*PIXEL_RATIO+'px OpenSans')
 		.setTextAlign('center')
+		.setAlpha(0)
 		.setFillStyle('white'),20);
-	      
+console.log(logo);
 	//SHOW START BUTTON      		      
-	btn = io.addObj(new iio.Rect(io.canvas.width/2,io.canvas.height/2 + 100, 160, 40)
+	btn = io.addObj(new iio.Rect(io.canvas.width/2,io.canvas.height/2 + 100*PIXEL_RATIO, 160*PIXEL_RATIO, 60*PIXEL_RATIO)
 		.setFillStyle('#00baff'));
 	
-	
 	btn.text = io.addToGroup('MENU',new iio.Text('Start',btn.pos)
-		.setFont('26px Consolas')
-		.translate(0,8)
+		.setFont(30*PIXEL_RATIO+'px OpenSans')
+		.translate(0,16)
 		.setTextAlign('center')
 		.setFillStyle('white'),20);
-      
+
+
+	new TWEEN.Tween( { x: 0, y: 0 } )
+					.to( { x: io.canvas.width/2,y: io.canvas.height/2}, 1000 )
+					.easing( TWEEN.Easing.Bounce.Out)
+					.onUpdate( function () {
+						//topCurtain.height = this.y;
+						logo.pos.y = this.y;
+						logo.pos.x = this.x;
+						logo.styles.alpha = 1;
+					} )
+					.delay(1000)
+					.start();
+					
+		            
 	//  gameOn = false;
       
 }
@@ -260,7 +326,7 @@ function createWorld(io){
 	btn = undefined;    
     //create the box2d world
 	world = io.addB2World(new b2World(
-    new b2Vec2(0, 30)    //gravity
+    new b2Vec2(0, 20)    //gravity
    ,true                 //allow sleep
 	));
 	level = io.activateLevel1(io);
@@ -272,4 +338,12 @@ function createWorld(io){
 	io.pauseB2World(false);
 	io.pauseFramerate(false);
 	
+}
+
+function pxConv(x,box2dconv){
+	x = x * PIXEL_RATIO;
+	if(box2dconv == true){
+		x = x / PTM;
+	}
+	return x;
 }
