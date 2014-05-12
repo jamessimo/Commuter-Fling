@@ -19,19 +19,23 @@ function lvl1(io){
 	this.killCount = -1;
 	this.killText = io.addToGroup('GUI', new iio.Text('',pxConv(300),this.cHeight-pxConv(30))
 	     .setFont(pxConv(30)+'px OpenSans')
-	     .setFillStyle('red'),20);
+	     .setShadow('#b81519',4,4,0)
+	     .setFillStyle('#dc4337'),20);
 	     
 	//SCORE VARS
 	this.score = -1;
 	this.scoreText = io.addToGroup('GUI', new iio.Text('',pxConv(40),pxConv(130))
 	     .setFont(pxConv(30)+'px OpenSans')
+	     .setShadow('grey',4,4,0)
 	     .setFillStyle('white'),20);
-	     
 	
 	//TIME VARS
-	this.timerText = io.addToGroup('GUI', new iio.Text('',this.cWidth-pxConv(200),this.cHeight-pxConv(30))
+	this.timerText = io.addToGroup('GUI', new iio.Text('Time 0 / 30',this.cWidth-pxConv(200),this.cHeight-pxConv(30))
 	     .setFont(pxConv(30)+'px OpenSans')
-	     .setFillStyle('yellow'),20);
+	     .setShadow('#f0ca38',4,4,0)
+	     .setFillStyle('#f6eb3c'),20);
+	     
+	this.timerOn = true;
 	this.time = 0;
 	this.startTime = new Date().getTime();
 	this.elapsed = 0.0;
@@ -260,21 +264,15 @@ lvl1.prototype.setup = function(){
 	fixDef.isSensor = false;
 	fixDef.userData = undefined;
 	fixDef.shape.SetAsBox(pxConv(20,true),pxConv(70,true));
-	
 	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.height,pxConv(500	,true));
-	
 	this.prepShape(bodyDef, fixDef).addImage(this.imgPath + 'block.png',function() {this.loadResources++;});
-	
-	//console.log('current pos = ' + bodyDef.position.y*PTM);
-	//	console.log('current height = ' + fixDef.shape.height*PTM);
-	
+
 	//FLOOR 2
 	fixDef.isSensor = false;
 	fixDef.userData = undefined;
 	fixDef.shape.SetAsBox(pxConv(20,true),pxConv(40,true));
 	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.height,pxConv(230,true));
 	this.prepShape(bodyDef, fixDef).addImage(this.imgPath+'block.png',function() {this.loadResources++});
-	
 	
 	//MOVING WALL
 	this.blockerBodyDef.type = b2Body.b2_kinematicBody;
@@ -293,17 +291,12 @@ lvl1.prototype.setup = function(){
          .setStrokeStyle('white').addImage(this.imgPath + 'block.png',function() {this.loadResources++});
          
     //this.blocker.m_shape.fadeOut(1,1);
-    	    	     
-	// console.log(this.blocker);
-	//	console.log(this.blockerFixDef);
-	//	console.log(this.blockerBodyDef);
 		
 	fixDef.isSensor = false;
 	fixDef.userData = undefined;
 			
 	//CREATE INITAL CAR
-	
-	this.createCar(-500/PTM,(this.cHeight - 200)/PTM,'red','mini');
+	this.createCar(-500/PTM,(this.cHeight - 200)/PTM,'yellow','mini');
 	//this.createCar(this.cHeight/PTM/2,this.cWidth/PTM/2,'red','sedan');
 	
 	//INIT GUI
@@ -313,7 +306,7 @@ lvl1.prototype.setup = function(){
 	this.loadResources++;
 	console.log(this.loadResources);
 	
-}
+	}
 
 //CREATE CAR
 lvl1.prototype.createCar = function(x,y,color,type){
@@ -341,7 +334,7 @@ lvl1.prototype.createCar = function(x,y,color,type){
 	
 	bodyDef.position.x = x;
 	bodyDef.position.y = y;
-	
+
 	if(type == 'mini'){
 		fixDef.shape.SetAsArray([
 			new b2Vec2(pxConv(-210,true)/4, pxConv(-146,true)/4), 
@@ -356,9 +349,23 @@ lvl1.prototype.createCar = function(x,y,color,type){
 		
 		//fixDef.shape.SetAsBox(pxConv(241,true)/4,pxConv(146,true)/4);
 	} else if (type=='sedan') {
+		fixDef.density = 7.5;
+		
 		fixDef.shape.SetAsBox(pxConv(403,true)/4,pxConv(129,true)/4);
 	} else if (type=='van') {
-		fixDef.shape.SetAsBox(pxConv(428,true)/4,pxConv(174,true)/4);
+		fixDef.density = 10;
+		fixDef.shape.SetAsArray([
+			new b2Vec2(pxConv(-390,true)/4, pxConv(-174,true)/4), 
+			new b2Vec2(pxConv(210,true)/4, pxConv(-174,true)/4),
+			new b2Vec2(pxConv(428,true)/4, pxConv(20,true)/4),  
+			new b2Vec2(pxConv(428,true)/4, pxConv(120,true)/4), 
+			new b2Vec2(pxConv(300,true)/4, pxConv(174,true)/4), 
+			new b2Vec2(pxConv(-320,true)/4, pxConv(174,true)/4),
+			new b2Vec2(pxConv(-428,true)/4, pxConv(130,true)/4),
+			new b2Vec2(pxConv(-428,true)/4, pxConv(-0,true)/4), 
+		]);
+		//fixDef.shape.SetAsBox(pxConv(428,true)/4,pxConv(174,true)/4);
+		
 	}
 	
 	for(var i = 0 ; i < fixDef.shape.m_vertexCount ; i++){
@@ -372,7 +379,7 @@ lvl1.prototype.createCar = function(x,y,color,type){
 		.setFillStyle('white'),100);
 	}
   
- 	this.prepShape(bodyDef, fixDef,'carObj',10).addImage(this.imgPath+'/'+color+'/'+ type + '.png').setFillStyle('rgba(0,186,255,.4)')
+ 	this.prepShape(bodyDef, fixDef,'carObj',10).addImage(this.imgPath+'/'+color+'/'+ type + '.png').setFillStyle('rgba(0,186,255,.0)')
  	   //.setStrokeStyle('white');
 };
 
@@ -410,27 +417,26 @@ lvl1.prototype.updateKills = function(){
 };
 
 lvl1.prototype.timer = function(){
-/*	
-	this.time = new Date().getTime() - this.startTime;
-
-    this.elapsed = Math.floor(this.time / 100) / 10;
-    if(Math.round(this.elapsed) == this.elapsed) { 
-    	this.elapsed += '.0'; 
+	
+	if(this.timerOn){
+		this.time = new Date().getTime() - this.startTime;
+	
+	    this.elapsed = Math.floor(this.time / 100) / 10;
+	    if(Math.round(this.elapsed) == this.elapsed) { 
+	    	this.elapsed += '.0'; 
+	    }
+	    
+	  	//var minutes = Math.floor(this.elapsed / 60);
+	    //var seconds = this.elapsed - minutes * 60;
+	    
+	    this.timerText.setText('Time '+ Math.round(this.elapsed) + ' / ' + this.timeOut)   
+    }else{
+    	 this.timerText.setText('Time Disabled')   
     }
-    
-  	//var minutes = Math.floor(this.elapsed / 60);
-    //var seconds = this.elapsed - minutes * 60;
-    
-    this.timerText.setText('Time '+ Math.round(this.elapsed) + ' / ' + this.timeOut)   
-    */
 };
 lvl1.prototype.kill = function(){
 	if(this.killList.length){
 		for (var i = 0, l = this.killList.length; i < l; ++i) {
-			//lio.rmvObj(this.killList[i]);
-			//console.log(this.killList[i]);
-		   	//world.DestroyBody(this.killList[i]);
-		    //this.io.rmvObj('carObj',this.killList[i]);
 		    this.io.rmvFromGroup('carObj',this.killList[i]);
 		    if(i != -1) {
 		    	this.killList.splice(i, 1);
@@ -443,30 +449,11 @@ lvl1.prototype.step = function(){
 	this.timer();
 	this.kill();
 	var lio = this;
-	
-	
-	//console.log(this.blocker.GetBody().m_fx.position.x);
-		
-	//var moveB = this.blocker.GetBody();
-	
-	//console.log(moveB.m_xf.position.x);
 
-	//MOVE BLOCKER
-	/*this.blocker.m_vertices[0].y += 0.1;
-	this.blocker.m_vertices[1].y += 0.1;
-	this.blocker.m_vertices[2].y += 0.1;
-	this.blocker.m_vertices[3].y += 0.1;*/
-	//CREATE RANDOM CARS
-	if (this.carCount < this.MAX_CARS && Math.random()<.03){
-		if (Math.random()<.2){
-			var carColor = this.carColors[Math.floor(Math.random()*this.carColors.length)];
-			//lio.createCar(-100/PTM,(lio.cHeight - 100)/PTM,carColor);
-		}
-	}
 	//MOVE CARS
 	if(lio.movers.length){
 		for (var i = 0, l = this.movers.length; i < l; ++i) {
-			this.movers[i].SetLinearVelocity(new b2Vec2(lio.spawnSpeed,0));
+			this.movers[i].SetLinearVelocity(new b2Vec2(lio.spawnSpeed,1));
 		}
 	}
 
@@ -554,16 +541,9 @@ lvl1.prototype.step = function(){
 			}
 		}
 		if(contact.GetFixtureB().GetUserData() == 'door'){
-			//lio._this.createCar(-100/PTM,(lio.cHeight - 100)/PTM,'red');
-			//console.log(lio)
-			//var boundGetX = getX.bind(module);
-			
-			//lio.createCar.call(-100/PTM,(lio.cHeight - 100)/PTM,'red');
-			//if(lio.movers && lio.movers.length){
-				setTimeout(function() {
-					lio.createCar(-500/PTM,(lio.cHeight - 200)/PTM);
-				}, 100);
-			//}
+			setTimeout(function() {
+				lio.createCar(-500/PTM,(lio.cHeight - 200)/PTM);
+			}, 100);
 		}
 	}
 }

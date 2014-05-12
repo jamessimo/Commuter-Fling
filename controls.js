@@ -7,7 +7,7 @@ var canvasOffset = {
 var btn = null;
 var mouseX, mouseY, mousePVec, isMouseDown, selectedBody, mouseJoint;
     
-//load necessary classes
+//load BOX2D classes
 var   b2Vec2 = Box2D.Common.Math.b2Vec2
 ,  	b2BodyDef = Box2D.Dynamics.b2BodyDef
 ,  	b2Body = Box2D.Dynamics.b2Body
@@ -76,21 +76,13 @@ function GameControl(io) {
 
 	createHiDPICanvas(1024, 768);
 	io.canvas.width = 1024*PIXEL_RATIO;
-	io.canvas.height = 768*PIXEL_RATIO;
-	
-	
-
-
-	//io.canvas.style.width=1024;
-	//io.canvas.style.height=768;
-	
-	
+	io.canvas.height = 768*PIXEL_RATIO;	
 	 
 	io.addB2World(world);
-	
+	//io.playSound('music/FirstClassLounging.mp3');
 	intro(io);
 	//createWorld(io);
-	
+	//level.gameOver = true;
 	canvasOffset.x = 0;
 	canvasOffset.y = 0;
 	
@@ -140,10 +132,8 @@ function GameControl(io) {
 		     mouseJoint = null;
 		  }
 		}
-						TWEEN.update();
-		
+		TWEEN.update();
 		meter.tick();
-		
     });
 
 	
@@ -194,7 +184,7 @@ function GameControl(io) {
     
     
     function mouseMove(e){
-      	mouseX = ((io.getEventPosition(e).x) / PTM*scaleX)*PIXEL_RATIO; //xy if absolue, xx if relative. 
+      	mouseX = ((io.getEventPosition(e).x) / PTM*scaleX)*PIXEL_RATIO;
        	mouseY = ((io.getEventPosition(e).y) / PTM*scaleY)*PIXEL_RATIO; 
     }
     
@@ -257,20 +247,59 @@ function gameOver(io){
 	
 	
 	//SHOW GAME OVER TEXT
-	io.addToGroup('MENU',(new iio.Text('Game Over :(',iio.Vec.add(io.canvas.width/2,io.canvas.height/2,0,0)))
-		.setFont('60px Courier New')
+	var gameoverText = io.addToGroup('MENU',(new iio.Text('Game Over!',iio.Vec.add(io.canvas.width/2,-100,0,0)))
+		.setFont(pxConv(60)+'px OpenSans')
 		.setTextAlign('center')
+		.setShadow('rgb(150,150,150)',5,5,0)
 		.setFillStyle('white'),20);
 	  
 	//SHOW GAMEOVER BUTTON      		      
-	btn = io.addToGroup('MENU',new iio.Rect(io.canvas.width/2,io.canvas.height/2 + 100, 160, 40)
-	.setFillStyle('#00baff'),20);
+	btn = io.addToGroup('MENU',new iio.Rect(io.canvas.width/2, -100, pxConv(160), pxConv(60))
+		.setRoundingRadius(20)
+		.setStrokeStyle('#4385f6').setLineWidth(2)
+		.setShadow('#386ad5',5,5,0)
+		.setFillStyle('#4385f6'),20);
 	btn.text = io.addToGroup('MENU', new iio.Text('Restart',btn.pos)
-		.setFont('26px Consolas')
-		.translate(0,8)
+		.setFont(pxConv(30)+'px OpenSans')
+		.translate(0,20)
 		.setTextAlign('center')
 		.setFillStyle('white'),20);
 		
+		
+	var topCurtain = io.addToGroup('UIEFFECTS',(new iio.Rect(io.canvas.width/2,0,io.canvas.width,1))
+		.setFillStyle('rgba(0,0,0,0.5)'),20);
+		
+	var bottomCurtain = io.addToGroup('UIEFFECTS',(new iio.Rect(io.canvas.width/2,io.canvas.height,io.canvas.width,1))
+		.setFillStyle('rgba(0,0,0,0.5)'),20);
+			
+			
+	new TWEEN.Tween( {y: 0 } )
+		.to( { y:io.canvas.height}, 1000 )
+		.easing( TWEEN.Easing.Bounce.Out)
+		.onUpdate( function () {
+			topCurtain.height = this.y;
+			bottomCurtain.height = this.y;
+			gameoverText.pos.y = this.y/2 - 50;
+		} )
+		.delay(1000)
+		.start();
+		
+	new TWEEN.Tween( {y: io.canvas.height } )
+		.to( { y:io.canvas.height/2}, 1000 )
+		.easing( TWEEN.Easing.Bounce.Out)
+		.onUpdate( function () {
+			if(btn){
+				btn.pos.y = this.y+100;
+				btn.text.pos.y = this.y+100;
+				btn.text.translate(0,18);
+			}
+		} )
+		.delay(1000)
+		.start();
+		
+	
+	
+					
 	io.pauseB2World(true);
 	io.pauseFramerate(true);
 }
@@ -279,41 +308,53 @@ function intro(io){
 	
 	io.setBGColor('#ccc');
 
-	/*var topCurtain = io.addToGroup('UIEFFECTS',(new iio.Rect(io.canvas.width/2,0,io.canvas.width,1))
-	.setFillStyle('rgba(0,0,0,0.5)'),20);*/
-
-
 	//SHOW LOGO
 	var logo = io.addToGroup('MENU',(new iio.Text('Commuter Fling!',iio.Vec.add(io.canvas.width,0,0,0)))
 		.setFont(60*PIXEL_RATIO+'px OpenSans')
 		.setTextAlign('center')
 		.setAlpha(0)
 		.setFillStyle('white'),20);
-console.log(logo);
+
 	//SHOW START BUTTON      		      
-	btn = io.addObj(new iio.Rect(io.canvas.width/2,io.canvas.height/2 + 100*PIXEL_RATIO, 160*PIXEL_RATIO, 60*PIXEL_RATIO)
-		.setFillStyle('#00baff'));
+	btn = io.addObj(new iio.Rect(io.canvas.width/2,io.canvas.height+pxConv(100), pxConv(160), pxConv(60))
+	    .setRoundingRadius(40)
+		.setFillStyle('#4385f6'));
 	
 	btn.text = io.addToGroup('MENU',new iio.Text('Start',btn.pos)
 		.setFont(30*PIXEL_RATIO+'px OpenSans')
 		.translate(0,16)
 		.setTextAlign('center')
+		.setLineHeight('3em')
 		.setFillStyle('white'),20);
 
 
-	new TWEEN.Tween( { x: 0, y: 0 } )
-					.to( { x: io.canvas.width/2,y: io.canvas.height/2}, 1000 )
-					.easing( TWEEN.Easing.Bounce.Out)
-					.onUpdate( function () {
-						//topCurtain.height = this.y;
-						logo.pos.y = this.y;
-						logo.pos.x = this.x;
-						logo.styles.alpha = 1;
-					} )
-					.delay(1000)
-					.start();
+	new TWEEN.Tween( { x: 0, y: io.canvas.height } )
+		.to( { x: io.canvas.width/2,y: io.canvas.height/2}, 1000 )
+		.easing( TWEEN.Easing.Elastic.Out)
+		.onUpdate( function () {
+			logo.pos.y = this.y;
+			logo.pos.x = this.x;
+			logo.styles.alpha = 1;
+		} )
+		.delay(1000)
+		.start();
+		
 					
-		            
+	new TWEEN.Tween( { x: 0, y: io.canvas.height} )
+		.to( { x: io.canvas.width/2,y: io.canvas.height/2 + 150}, 1000 )
+		.easing( TWEEN.Easing.Bounce.Out)
+		.onUpdate( function () {
+			if(btn){
+				btn.pos.y = this.y;
+				btn.text.pos.y = this.y;
+				btn.text.translate(0,18);
+			}
+		} )
+		.delay(2000)
+		.start();
+	        
+	 
+	        
 	//  gameOn = false;
       
 }
@@ -326,7 +367,7 @@ function createWorld(io){
 	btn = undefined;    
     //create the box2d world
 	world = io.addB2World(new b2World(
-    new b2Vec2(0, 20)    //gravity
+    new b2Vec2(0, 30)    //gravity
    ,true                 //allow sleep
 	));
 	level = io.activateLevel1(io);
