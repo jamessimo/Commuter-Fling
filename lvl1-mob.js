@@ -18,19 +18,19 @@ function lvl1(io){
 	this.killList = [];
 	this.killCount = -1;
 	this.killText = io.addToGroup('GUI', new iio.Text('',300,this.cHeight-30)
-	     .setFont('30px Consolas')
+	     .setFont('30px OpenSans')
 	     .setFillStyle('red'),20);
 	     
 	//SCORE VARS
 	this.score = -1;
 	this.scoreText = io.addToGroup('GUI', new iio.Text('',40,this.cHeight-30)
-	     .setFont('30px Ubuntu')
+	     .setFont('30px OpenSans')
 	     .setFillStyle('white'),20);
 	     
 	
 	//TIME VARS
 	this.timerText = io.addToGroup('GUI', new iio.Text('',this.cWidth-200,this.cHeight-30)
-	     .setFont('30px Consolas')
+	     .setFont('30px OpenSans')
 	     .setFillStyle('yellow'),20);
 	this.time = 0;
 	this.startTime = new Date().getTime();
@@ -272,7 +272,7 @@ lvl1.prototype.setup = function(){
          .setFillStyle('rgba(0,186,255,.4)')
          .setStrokeStyle('white').addImage('img/block.png',function() {this.loadResources++});
          
-    
+    //this.blocker.m_shape.fadeOut(1,1);
     	    	     
 	// console.log(this.blocker);
 	//	console.log(this.blockerFixDef);
