@@ -299,7 +299,6 @@ function gameOver(io){
 		
 	
 	
-					
 	io.pauseB2World(true);
 	io.pauseFramerate(true);
 }
@@ -339,22 +338,34 @@ function intro(io){
 		.delay(1000)
 		.start();
 		
-					
-	new TWEEN.Tween( { x: 0, y: io.canvas.height} )
-		.to( { x: io.canvas.width/2,y: io.canvas.height/2 + 150}, 1000 )
+	//			console.log(btn);			
+	new TWEEN.Tween( { x: 0, y: io.canvas.height,rotation:-360})
+		.to( { x: io.canvas.width/2,y: io.canvas.height/2 + 150,rotation:25}, 1000 )
 		.easing( TWEEN.Easing.Bounce.Out)
 		.onUpdate( function () {
 			if(btn){
 				btn.pos.y = this.y;
 				btn.text.pos.y = this.y;
 				btn.text.translate(0,18);
+				//btn.rotate(this.rotation);
+				//btn.text.rotate(this.rotation);
+				
 			}
 		} )
+		//.repeat( Infinity )
 		.delay(2000)
 		.start();
-	        
-	 
-	        
+		
+		/*new TWEEN.Tween( {rotation:0})
+			.to( {rotation:25}, 1000 )
+			.onUpdate( function () {
+				if(btn){
+					btn.rotate(this.rotation);
+				}
+			} )
+			.repeat( 6 )
+			.start();*/
+	        	        
 	//  gameOn = false;
       
 }

@@ -82,7 +82,7 @@ lvl1.prototype.setup = function(){
 	/*goal.prototype.body,
 	goal.prototype.fix,
 	goal.prototype.color = '';*/
-
+//this.io.playSound('music/Admiration.mp3');
 	//SET IMAGE PATH
 	this.io.setBGImage(this.imgPath+'background1.png',false);
 	this.loadResources++;  
@@ -297,6 +297,7 @@ lvl1.prototype.setup = function(){
 			
 	//CREATE INITAL CAR
 	this.createCar(-500/PTM,(this.cHeight - 200)/PTM,'yellow','mini');
+		this.createCar(100/PTM,(this.cHeight - 100)/PTM,'red','sedan');
 	//this.createCar(this.cHeight/PTM/2,this.cWidth/PTM/2,'red','sedan');
 	
 	//INIT GUI
@@ -429,7 +430,9 @@ lvl1.prototype.timer = function(){
 	  	//var minutes = Math.floor(this.elapsed / 60);
 	    //var seconds = this.elapsed - minutes * 60;
 	    
-	    this.timerText.setText('Time '+ Math.round(this.elapsed) + ' / ' + this.timeOut)   
+	    this.timerText.setText('Time '+ Math.round(this.elapsed) + ' / ' + this.timeOut) 
+	    
+	      
     }else{
     	 this.timerText.setText('Time Disabled')   
     }

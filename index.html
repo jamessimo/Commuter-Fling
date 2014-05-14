@@ -55,18 +55,24 @@
     </section>
 <!-- Load FrameWorks -->
 <script type="text/javascript" src="Box2dWeb-2.1.a.3.js"></script>
+<script type="text/javascript" src="SM2/soundmanager2-jsmin.js"></script>
 <script type="text/javascript" src="iioEngine.js"></script>
 <!-- Load applications -->
 
 </script>
 <script type="text/javascript">  
-    window.onload = function() {
-        iio.start(GameControl,'game-canvas');
-    };        
+soundManager.setup({
+  // required: path to directory containing SM2 SWF files
+  url: 'SM2/swf/',
+  preferFlash:false,
+  onready: function() {
+  	iio.start(GameControl,'game-canvas');
+  }
+});      
 </script>
 <script src="iioDebugger.js" type="text/javascript"></script>
 <script src="fps.js" type="text/javascript"></script>
-<script src="tween.min" type="text/javascript"></script>
+<script src="tween.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="controls.js"></script>
 <script type="text/javascript" src="lvl1.js"></script>
 
