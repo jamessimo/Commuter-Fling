@@ -218,8 +218,6 @@ lvl1.prototype.setup = function(){
 	//this.doorStop.GetShape().prepGraphics(this.io.b2Scale)
 	  //   .setFillStyle('rgba(255,255,255,.8)');
 	
-		
-		
 	fixDef.userData = undefined;
 	
 	//BLUE GOAL - BOTTOM

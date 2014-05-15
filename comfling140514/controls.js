@@ -78,8 +78,8 @@ function GameControl(io) {
 	 
 	io.addB2World(world);
 	//io.playSound('music/FirstClassLounging.mp3');
-	intro(io);
-	//createWorld(io);
+	//intro(io);
+	createWorld(io);
 	//level.gameOver = true;
 	canvasOffset.x = 0;
 	canvasOffset.y = 0;
@@ -105,7 +105,7 @@ function GameControl(io) {
 		
 		if(mouseX > io.canvas.width/2/PTM){
 		//KILL BOX2D CLICK IF MORE THAN HALF THE SCREEN
-		// isMouseDown = false;
+			isMouseDown = false;
 		}
 		
 		if(isMouseDown && (!mouseJoint) && world) {
