@@ -34,8 +34,6 @@ var gameOn = false;
 var PIXEL_RATIO = 1;
 function GameControl(io) {
 
-	var meter = new FPSMeter({heat:1,left: io.canvas.width/2+'px' , graph: 1, theme: 'colorful'});	
-
 	var scaleX = io.canvas.width / window.innerWidth;
 	var scaleY = io.canvas.height / window.innerHeight;
 	var scaleToFit = Math.min(scaleX, scaleY);
@@ -133,7 +131,6 @@ function GameControl(io) {
 		  }
 		}
 		TWEEN.update();
-		meter.tick();
     });
 
 	
