@@ -70,15 +70,14 @@ function GameControl(io) {
 	
 	 //Debugging 
 	scaleX = scaleY = 1;
-	//PIXEL_RATIO = 1;
+	PIXEL_RATIO = 1;
 
-	createHiDPICanvas(window.innerWidth, window.innerHeight);
+	//createHiDPICanvas(1024, 768);
+	//io.canvas.width = 1024*PIXEL_RATIO;
+	//io.canvas.height = 768*PIXEL_RATIO;	
 	
-	io.canvas.width = window.innerWidth*PIXEL_RATIO;
-	io.canvas.height = window.innerHeight*PIXEL_RATIO;	
-	
-	//io.canvas.width = window.innerWidth;
-	//io.canvas.height = window.innerHeight;
+	io.canvas.width = window.innerWidth;
+	io.canvas.height = window.innerHeight;
 	
 	 
 	io.addB2World(world);
