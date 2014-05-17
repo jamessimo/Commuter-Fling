@@ -38,27 +38,28 @@ function GameControl(io) {
 	var scaleY = io.canvas.height / window.innerHeight;
 	var scaleToFit = Math.min(scaleX, scaleY);
 	
+		PIXEL_RATIO = (function () {
+		    var ctx = io.context,
+		        dpr = window.devicePixelRatio || 1,
+		        bsr = ctx.webkitBackingStorePixelRatio ||
+		              ctx.mozBackingStorePixelRatio ||
+		              ctx.msBackingStorePixelRatio ||
+		              ctx.oBackingStorePixelRatio ||
+		              ctx.backingStorePixelRatio || 1;
+		
+		    return dpr / bsr;
+		})();
+	
 	this.onResize = function(event){
 		scaleX = io.canvas.width / window.innerWidth;
 		scaleY = io.canvas.height / window.innerHeight;
 		scaleToFit = Math.min(scaleX, scaleY);
 	};
-
-	PIXEL_RATIO = (function () {
-	    var ctx = io.context,
-	        dpr = window.devicePixelRatio || 1,
-	        bsr = ctx.webkitBackingStorePixelRatio ||
-	              ctx.mozBackingStorePixelRatio ||
-	              ctx.msBackingStorePixelRatio ||
-	              ctx.oBackingStorePixelRatio ||
-	              ctx.backingStorePixelRatio || 1;
-	
-	    return dpr / bsr;
-	})();
 	
 	
 	createHiDPICanvas = function(w, h, ratio) {
 	    if (!ratio) { ratio = PIXEL_RATIO; }
+	   	
 	    var can = io.canvas;
 	    can.width = w * ratio;
 	    can.height = h * ratio;
@@ -67,17 +68,17 @@ function GameControl(io) {
 	    can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
 	    return can;
 	}
-	
+
 	 //Debugging 
 	scaleX = scaleY = 1;
-	PIXEL_RATIO = 1;
-
-	//createHiDPICanvas(1024, 768);
-	//io.canvas.width = 1024*PIXEL_RATIO;
-	//io.canvas.height = 768*PIXEL_RATIO;	
+	//PIXEL_RATIO = 1;
+	io.addCanvas(0, 1024*PIXEL_RATIO, 768*PIXEL_RATIO)
+	createHiDPICanvas(1024, 768);
+	io.canvas.width = 1024*PIXEL_RATIO;
+	io.canvas.height = 768*PIXEL_RATIO;	
 	
-	io.canvas.width = window.innerWidth;
-	io.canvas.height = window.innerHeight;
+	//io.canvas.width = window.innerWidth;
+	//io.canvas.height = window.innerHeight;
 	
 	 
 	io.addB2World(world);
