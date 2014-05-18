@@ -72,13 +72,21 @@ function GameControl(io) {
 	 //Debugging 
 	scaleX = scaleY = 1;
 	//PIXEL_RATIO = 1;
-	io.addCanvas(0, 1024*PIXEL_RATIO, 768*PIXEL_RATIO)
+	io.addCanvas(0, 1024, 768)
 	createHiDPICanvas(1024, 768);
-	io.canvas.width = 1024*PIXEL_RATIO;
-	io.canvas.height = 768*PIXEL_RATIO;	
 	
-	//io.canvas.width = window.innerWidth;
-	//io.canvas.height = window.innerHeight;
+	io.canvas.width = io.canvas.width;
+	io.canvas.height = io.canvas.height;	
+	
+	/*
+	io.canvas.width = window.innerWidth;
+	io.canvas.height = window.innerHeight;*/
+	
+	//DEBUGGING
+	console.log('io.canvas W/H = ' + io.canvas.width+'/'+io.canvas.height);
+	console.log('css canvas W/H = ' + io.canvas.style.width+'/'+io.canvas.style.height)
+	console.log('screen W/H = ' +  window.innerWidth+'/'+window.innerHeight);
+	console.log('pixel_ratio = ' + PIXEL_RATIO);
 	
 	 
 	io.addB2World(world);

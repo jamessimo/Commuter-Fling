@@ -206,6 +206,11 @@ lvl1.prototype.setup = function(){
 	fixDef.shape.SetAsBox(pxConv(1,true),pxConv(60,true));
 	fixDef.userData = 'door';
 	bodyDef.position.Set(0, (this.cHeight-pxConv(60))/PTM);
+	console.log('door x = ' +  bodyDef.position.x);
+	console.log('door y = ' +  bodyDef.position.y);
+	
+	console.log('PC door x = 0');
+	console.log('PC door y = 47.2');
 	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(255,0,255,.8)');
 	
 	//HOPPER DOOR STOP //LEFT
