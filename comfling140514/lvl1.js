@@ -462,8 +462,8 @@ lvl1.prototype.step = function(){
 
 	//MOVE CARS
 	if(lio.movers.length){
-		for (var i = 0, l = this.movers.length; i < l; ++i) {
-			this.movers[i].SetLinearVelocity(new b2Vec2(lio.spawnSpeed,1));
+		for (var i = 0, l = lio.movers.length; i < l; ++i) {
+			lio.movers[i].SetLinearVelocity(new b2Vec2(lio.spawnSpeed,1));
 		}
 	}
 
@@ -520,6 +520,7 @@ lvl1.prototype.step = function(){
 		}
 		
 		if(contact.GetFixtureB().GetUserData() == 'constvel'){
+			console.log('pushed a car onto movers list');
 			lio.movers.push(contact.GetFixtureA().GetBody());
 		}
 
@@ -546,6 +547,7 @@ lvl1.prototype.step = function(){
 		if(contact.GetFixtureB().GetUserData() == 'constvel'){
 			//Remove a given mover
 			var i = lio.movers.indexOf(contact.GetFixtureA().GetBody());
+			console.log('removed car from movers')
 			if(i != -1) {
 				lio.movers.splice(i, 1);
 			}
