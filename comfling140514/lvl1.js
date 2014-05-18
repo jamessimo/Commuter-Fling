@@ -41,7 +41,7 @@ function lvl1(io){
 	this.elapsed = 0.0;
 	
 	//GAME VARS
-	this.spawnSpeed = 5;
+	this.spawnSpeed = 5*PIXEL_RATIO;
 	this.carCount = 0;
 	
 	
@@ -84,7 +84,11 @@ lvl1.prototype.setup = function(){
 	goal.prototype.color = '';*/
 //this.io.playSound('music/Admiration.mp3');
 	//SET IMAGE PATH
-	this.io.setBGImage(this.imgPath+'background1.png',false);
+	
+	//this.io.setBGImage(this.imgPath+'background1.png',false);
+	
+	this.io.setBGColor('green');
+	
 	this.loadResources++;  
 	//DEFINE WORLD FIXTURE
 	var fixDef = new b2FixtureDef;
@@ -125,7 +129,7 @@ lvl1.prototype.setup = function(){
 				
 	//console.log(this.cHeight); //MAKE INTO FUNTION
 	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(255,255,255,.6)');
-	
+	/*
 	for(var i = 0 ; i < fixDef.shape.m_vertexCount ; i++){
 	
 		this.io.addToGroup('coordsVerts',new iio.Rect(0,0,pxConv(5),pxConv(5))
@@ -137,7 +141,7 @@ lvl1.prototype.setup = function(){
 		   .setTextAlign('center')
 		   .setFillStyle('black'),100);
 	}
-	
+	*/
 		
 	//GROUND LEFT
 	fixDef.shape.SetAsBox(pxConv(455,true),fixDef.shape.height);
@@ -203,21 +207,21 @@ lvl1.prototype.setup = function(){
 	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(0,0,255,.8)');
 	
 	//HOPPER DOOR //LEFT
-	fixDef.shape.SetAsBox(pxConv(1,true),pxConv(60,true));
+	fixDef.shape.SetAsBox(pxConv(1,true),pxConv(110,true));
 	fixDef.userData = 'door';
-	bodyDef.position.Set(0, (this.cHeight-pxConv(60))/PTM);
+	bodyDef.position.Set(0, (this.cHeight-pxConv(130))/PTM);
 	console.log('door x = ' +  bodyDef.position.x);
 	console.log('door y = ' +  bodyDef.position.y);
 	
 	console.log('PC door x = 0');
 	console.log('PC door y = 47.2');
-	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(255,0,255,.8)');
+	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(255,0,255,1)');
 	
 	//HOPPER DOOR STOP //LEFT
-	fixDef.shape.SetAsBox(pxConv(1,true),pxConv(60,true));
+	fixDef.shape.SetAsBox(pxConv(1,true),pxConv(110,true));
 	fixDef.userData = 'doorstop';
-	bodyDef.position.Set(pxConv(1,true), (this.cHeight-pxConv(60))/PTM);
-	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(0,255,255,1)');
+	bodyDef.position.Set(pxConv(1,true), (this.cHeight-pxConv(130))/PTM);
+	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(0,100,100,0.5)');
 	
 	//this.doorStop = this.io.addObj(world.CreateBody(bodyDef)).CreateFixture(fixDef);
 	//this.doorStop.GetShape().prepGraphics(this.io.b2Scale)
@@ -299,7 +303,7 @@ lvl1.prototype.setup = function(){
 	fixDef.userData = undefined;
 			
 	//CREATE INITAL CAR
-	this.createCar(-500/PTM,(this.cHeight - 200)/PTM,'yellow','mini');
+	this.createCar(-250/PTM,(this.cHeight - 200)/PTM,'yellow','mini');
 		this.createCar(100/PTM,(this.cHeight - 100)/PTM,'red','sedan');
 	//this.createCar(this.cHeight/PTM/2,this.cWidth/PTM/2,'red','sedan');
 	
@@ -548,7 +552,7 @@ lvl1.prototype.step = function(){
 		}
 		if(contact.GetFixtureB().GetUserData() == 'door'){
 			setTimeout(function() {
-				lio.createCar(-500/PTM,(lio.cHeight - 200)/PTM);
+				lio.createCar(-250/PTM,(lio.cHeight - 200)/PTM);
 			}, 100);
 		}
 	}

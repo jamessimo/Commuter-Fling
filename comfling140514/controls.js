@@ -94,7 +94,7 @@ function GameControl(io) {
 	//intro(io);
 	createWorld(io);
 	//level.gameOver = true;
-	canvasOffset.x = 0;
+	canvasOffset.x = 500;
 	canvasOffset.y = 0;
 	
 	io.context.translate(canvasOffset.x, canvasOffset.y);

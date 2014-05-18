@@ -2536,7 +2536,7 @@ var iio = {};
          this.cnvs[i].style.display = "block"; //remove scrollbars
          this.cnvs[i].style.position = "absolute";
          this.cnvs[i].style.top = 0;
-         document.body.style.overflow = 'hidden';
+         document.body.style.overflow = 'scroll'; //change to hidden on deploy
       }
       if (this.cnvs[i].width==window.innerWidth){
          document.body.style.marginLeft = document.body.style.marginRight
