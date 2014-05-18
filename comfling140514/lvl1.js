@@ -82,12 +82,17 @@ lvl1.prototype.setup = function(){
 	/*goal.prototype.body,
 	goal.prototype.fix,
 	goal.prototype.color = '';*/
-//this.io.playSound('music/Admiration.mp3');
+	//this.io.playSound('music/Admiration.mp3');
+	
+	//var audio = new Audio('music/Admiration.mp3');
+	//audio.play();
+	
 	//SET IMAGE PATH
 	
 	//this.io.setBGImage(this.imgPath+'background1.png',false);
+	this.io.addToGroup('BACKGROUND',new iio.Rect(this.cWidth/2,this.cHeight/2,this.cWidth,this.cHeight).addImage(this.imgPath+'background1.png'),-10);
 	
-	this.io.setBGColor('green');
+	//this.io.setBGColor('green');
 	
 	this.loadResources++;  
 	//DEFINE WORLD FIXTURE

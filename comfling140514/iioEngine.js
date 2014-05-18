@@ -2850,9 +2850,20 @@ var iio = {};
     */
    AppManager.prototype.setBGColor = function(color, c){
       c=c||0;
-      this.cnvs[c].style.backgroundColor=color;
-      this.ctxs[c].fillStyle = color;
-      
+     this.cnvs[c].style.backgroundColor=color;
+     /*
+     // this.ctxs[c].fillStyle = color;
+    //  this.ctxs[c].fillRect(0,0,this.cnvs[c].width,this.cnvs[c].height);
+     // console.log(this.ctxs[c]);
+     
+    	lio = this;
+     bg_image = new Image();
+     bg_image.src = 'img/background1.png';
+     bg_image.onload = function(){
+    
+     	lio.ctxs[c].drawImage(bg_image,0,0)
+     }
+    */
       return this;
    }
    AppManager.prototype.setBGPattern = function(src, c){

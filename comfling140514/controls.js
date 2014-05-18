@@ -72,7 +72,7 @@ function GameControl(io) {
 	 //Debugging 
 	scaleX = scaleY = 1;
 	//PIXEL_RATIO = 1;
-	io.addCanvas(0, 1024, 768)
+	//io.addCanvas(0, 1024, 768)
 	createHiDPICanvas(1024, 768);
 	
 	io.canvas.width = io.canvas.width;
@@ -91,10 +91,13 @@ function GameControl(io) {
 	 
 	io.addB2World(world);
 	//io.playSound('music/FirstClassLounging.mp3');
+	var sound = new Howl({
+		urls: ['music/FirstClassLounging.mp3']
+	}).play();
 	//intro(io);
 	createWorld(io);
 	//level.gameOver = true;
-	canvasOffset.x = 500;
+	canvasOffset.x = 0;
 	canvasOffset.y = 0;
 	
 	io.context.translate(canvasOffset.x, canvasOffset.y);
