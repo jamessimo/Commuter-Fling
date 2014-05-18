@@ -17,7 +17,7 @@
 */
 var Box2D = {};
 
-(function (a2j, undefined) { //fix
+(function (a2j, undefined) { //FIX FOR IOS Chrome
 
 	a2j.MIN_VALUE = Number.MIN_VALUE;
 	  var d = 2;
