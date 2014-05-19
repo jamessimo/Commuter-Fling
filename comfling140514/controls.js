@@ -54,10 +54,12 @@ function GameControl(io) {
 		scaleX = io.canvas.width / window.innerWidth;
 		scaleY = io.canvas.height / window.innerHeight;
 		scaleToFit = Math.min(scaleX, scaleY);
+		io.canvas.width = 1024*PIXEL_RATIO;
+		io.canvas.height = 768*PIXEL_RATIO;
 	};
 	
 	
-	createHiDPICanvas = function(w, h, ratio) {
+	hiDPICanvas = function(w, h, ratio) {
 	    if (!ratio) { ratio = PIXEL_RATIO; }
 	   	
 	    var can = io.canvas;
@@ -72,8 +74,8 @@ function GameControl(io) {
 	 //Debugging 
 	scaleX = scaleY = 1;
 	//PIXEL_RATIO = 1;
-	//io.addCanvas(0, 1024, 768)
-	createHiDPICanvas(1024, 768);
+	
+	hiDPICanvas(1024, 768);
 	
 	io.canvas.width = io.canvas.width;
 	io.canvas.height = io.canvas.height;	
@@ -94,6 +96,7 @@ function GameControl(io) {
 	var sound = new Howl({
 		urls: ['music/FirstClassLounging.mp3']
 	}).play();
+	
 	//intro(io);
 	createWorld(io);
 	//level.gameOver = true;
@@ -350,8 +353,7 @@ function intro(io){
 		} )
 		.delay(1000)
 		.start();
-		
-	//			console.log(btn);			
+				
 	new TWEEN.Tween( { x: 0, y: io.canvas.height,rotation:-360})
 		.to( { x: io.canvas.width/2,y: io.canvas.height/2 + 150,rotation:25}, 1000 )
 		.easing( TWEEN.Easing.Bounce.Out)

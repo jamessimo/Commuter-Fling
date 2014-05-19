@@ -79,9 +79,7 @@ lvl1.prototype.setup = function(){
 		this.width = fix.shape.width;
 		this.color = fix.userData;
 	}
-	/*goal.prototype.body,
-	goal.prototype.fix,
-	goal.prototype.color = '';*/
+
 	//this.io.playSound('music/Admiration.mp3');
 	
 	//var audio = new Audio('music/Admiration.mp3');
@@ -215,11 +213,6 @@ lvl1.prototype.setup = function(){
 	fixDef.shape.SetAsBox(pxConv(1,true),pxConv(110,true));
 	fixDef.userData = 'door';
 	bodyDef.position.Set(0, (this.cHeight-pxConv(130))/PTM);
-	console.log('door x = ' +  bodyDef.position.x);
-	console.log('door y = ' +  bodyDef.position.y);
-	
-	console.log('PC door x = 0');
-	console.log('PC door y = 47.2');
 	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(255,0,255,1)');
 	
 	//HOPPER DOOR STOP //LEFT
@@ -298,9 +291,7 @@ lvl1.prototype.setup = function(){
 	this.blocker = this.io.addObj(world.CreateBody(this.blockerBodyDef)).CreateFixture(this.blockerFixDef);
     
    	this.blocker.GetBody().SetLinearVelocity(new b2Vec2(0,3));
-    this.blocker.GetShape().prepGraphics(this.io.b2Scale)
-         .setFillStyle('rgba(0,186,255,.4)')
-         .setStrokeStyle('white').addImage(this.imgPath + 'block.png',function() {this.loadResources++});
+    this.blocker.GetShape().prepGraphics(this.io.b2Scale).addImage(this.imgPath + 'block.png',function() {this.loadResources++});
          
     //this.blocker.m_shape.fadeOut(1,1);
 		
@@ -380,7 +371,7 @@ lvl1.prototype.createCar = function(x,y,color,type){
 		//fixDef.shape.SetAsBox(pxConv(428,true)/4,pxConv(174,true)/4);
 		
 	}
-	
+	/*
 	for(var i = 0 ; i < fixDef.shape.m_vertexCount ; i++){
 		this.io.addToGroup('coordsVerts',new iio.Rect(0,0,10,10)
 		.setPos((fixDef.shape.m_vertices[i].x + bodyDef.position.x) *PTM,(fixDef.shape.m_vertices[i].y + bodyDef.position.y)*PTM)
@@ -390,10 +381,9 @@ lvl1.prototype.createCar = function(x,y,color,type){
 		.setFont(pxConv(10)+'px Consolas')
 		.setTextAlign('center')
 		.setFillStyle('white'),100);
-	}
+	}*/
   
- 	this.prepShape(bodyDef, fixDef,'carObj',10).addImage(this.imgPath+'/'+color+'/'+ type + '.png').setFillStyle('rgba(0,186,255,.0)')
- 	   //.setStrokeStyle('white');
+ 	this.prepShape(bodyDef, fixDef,'carObj',10).addImage(this.imgPath+'/'+color+'/'+ type + '.png');
 };
 
 lvl1.prototype.randomColor = function(){
@@ -525,7 +515,6 @@ lvl1.prototype.step = function(){
 		}
 		
 		if(contact.GetFixtureB().GetUserData() == 'constvel'){
-			console.log('pushed a car onto movers list');
 			lio.movers.push(contact.GetFixtureA().GetBody());
 		}
 
@@ -552,7 +541,6 @@ lvl1.prototype.step = function(){
 		if(contact.GetFixtureB().GetUserData() == 'constvel'){
 			//Remove a given mover
 			var i = lio.movers.indexOf(contact.GetFixtureA().GetBody());
-			console.log('removed car from movers')
 			if(i != -1) {
 				lio.movers.splice(i, 1);
 			}
