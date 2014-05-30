@@ -71,9 +71,9 @@ function GameControl(io) {
 	    return can;
 	}
 
-	 //Debugging 
+	//Debugging 
 	scaleX = scaleY = 1;
-	//PIXEL_RATIO = 1;
+	PIXEL_RATIO = 1;
 	
 	hiDPICanvas(1024, 768);
 	
@@ -92,16 +92,16 @@ function GameControl(io) {
 	
 	 
 	io.addB2World(world);
-	//io.playSound('music/FirstClassLounging.mp3');
-	var sound = new Howl({
+	/*var sound = new Howl({
 		urls: ['music/FirstClassLounging.mp3']
-	}).play();
+	}).play();*/
 	
 	//intro(io);
 	createWorld(io);
 	//level.gameOver = true;
-	canvasOffset.x = 0;
-	canvasOffset.y = 0;
+	
+	//canvasOffset.x = -520;
+	//canvasOffset.y = -300;
 	
 	io.context.translate(canvasOffset.x, canvasOffset.y);
 	//io.context.scale(0.9,0.9);
@@ -124,7 +124,7 @@ function GameControl(io) {
 		
 		if(mouseX > io.canvas.width/2/PTM){
 		//KILL BOX2D CLICK IF MORE THAN HALF THE SCREEN
-			isMouseDown = false;
+			//isMouseDown = false;
 		}
 		
 		if(isMouseDown && (!mouseJoint) && world) {
@@ -250,9 +250,21 @@ function GameControl(io) {
 function winGame(io){
 	gameOn = false;
 	io.addToGroup('MENU',(new iio.Text('WINNAR :)',iio.Vec.add(io.canvas.width/2,io.canvas.height/2,0,0)))
-		.setFont('60px Courier New')
+		.setFont(pxConv(60)+'px Courier New')
 		.setTextAlign('center')
 		.setFillStyle('yellow'),20);
+		
+	btn = io.addToGroup('MENU',new iio.Rect(io.canvas.width/2, -100, pxConv(160), pxConv(60))
+		.setRoundingRadius(20)
+		.setStrokeStyle('#4385f6').setLineWidth(2)
+		.setShadow('#386ad5',pxConv(2.5),pxConv(2.5),0)
+		.setFillStyle('#4385f6'),20);
+	btn.text = io.addToGroup('MENU', new iio.Text('Restart?',btn.pos)
+		.setFont(pxConv(30)+'px OpenSans')
+		.translate(0,pxConv(9))
+		.setTextAlign('center')
+		.setFillStyle('white'),20);
+	
 		
 	io.pauseB2World(true);
 	io.pauseFramerate(true);
@@ -263,21 +275,21 @@ function gameOver(io){
 	
 	
 	//SHOW GAME OVER TEXT
-	var gameoverText = io.addToGroup('MENU',(new iio.Text('Game Over!',iio.Vec.add(io.canvas.width/2,-100,0,0)))
+	var gameoverText = io.addToGroup('MENU',(new iio.Text('Game Over!',iio.Vec.add(io.canvas.width/2,-pxConv(40),0,0)))
 		.setFont(pxConv(60)+'px OpenSans')
 		.setTextAlign('center')
-		.setShadow('rgb(150,150,150)',5,5,0)
+		.setShadow('rgb(150,150,150)',pxConv(2.5),pxConv(2.5),0)
 		.setFillStyle('white'),20);
 	  
 	//SHOW GAMEOVER BUTTON      		      
 	btn = io.addToGroup('MENU',new iio.Rect(io.canvas.width/2, -100, pxConv(160), pxConv(60))
 		.setRoundingRadius(20)
 		.setStrokeStyle('#4385f6').setLineWidth(2)
-		.setShadow('#386ad5',5,5,0)
+		.setShadow('#386ad5',pxConv(2.5),pxConv(2.5),0)
 		.setFillStyle('#4385f6'),20);
 	btn.text = io.addToGroup('MENU', new iio.Text('Restart',btn.pos)
 		.setFont(pxConv(30)+'px OpenSans')
-		.translate(0,20)
+		.translate(0,pxConv(9))
 		.setTextAlign('center')
 		.setFillStyle('white'),20);
 		
@@ -307,7 +319,7 @@ function gameOver(io){
 			if(btn){
 				btn.pos.y = this.y+100;
 				btn.text.pos.y = this.y+100;
-				btn.text.translate(0,18);
+				btn.text.translate(0,pxConv(9));
 			}
 		} )
 		.delay(1000)
@@ -325,21 +337,23 @@ function intro(io){
 
 	//SHOW LOGO
 	var logo = io.addToGroup('MENU',(new iio.Text('Commuter Fling!',iio.Vec.add(io.canvas.width,0,0,0)))
-		.setFont(60*PIXEL_RATIO+'px OpenSans')
+		.setFont(pxConv(60)+'px OpenSans')
 		.setTextAlign('center')
 		.setAlpha(0)
 		.setFillStyle('white'),20);
 
 	//SHOW START BUTTON      		      
 	btn = io.addObj(new iio.Rect(io.canvas.width/2,io.canvas.height+pxConv(100), pxConv(160), pxConv(60))
-	    .setRoundingRadius(40)
-		.setFillStyle('#4385f6'));
+	    .setRoundingRadius(pxConv(20))
+	    .setStrokeStyle('#4385f6')
+	    .setFillStyle('#4385f6')
+	    .setShadow('#386ad5',pxConv(2.5),pxConv(2.5),0)
+	    );
 	
 	btn.text = io.addToGroup('MENU',new iio.Text('Start',btn.pos)
-		.setFont(30*PIXEL_RATIO+'px OpenSans')
-		.translate(0,16)
+		.setFont(pxConv(30)+'px OpenSans')
+		.translate(0,pxConv(9))
 		.setTextAlign('center')
-		.setLineHeight('3em')
 		.setFillStyle('white'),20);
 
 
@@ -361,7 +375,7 @@ function intro(io){
 			if(btn){
 				btn.pos.y = this.y;
 				btn.text.pos.y = this.y;
-				btn.text.translate(0,18);
+				btn.text.translate(0,pxConv(9));
 				//btn.rotate(this.rotation);
 				//btn.text.rotate(this.rotation);
 				

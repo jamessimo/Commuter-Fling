@@ -84,7 +84,7 @@ lvl1.prototype.setup = function(){
 	goal.prototype.color = '';*/
 //this.io.playSound('music/Admiration.mp3');
 	//SET IMAGE PATH
-	this.io.setBGImage(this.imgPath+'background1.png',false);
+	this.io.setBGImage(this.imgPath+'background1.png',true);
 	this.loadResources++;  
 	//DEFINE WORLD FIXTURE
 	var fixDef = new b2FixtureDef;

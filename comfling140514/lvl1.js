@@ -1,6 +1,5 @@
 
 (function(){
-//console.log(iio);
 //Definition
 
 function lvl1(io){
@@ -13,26 +12,30 @@ function lvl1(io){
 	this.imgPath = 'img/';
 	this.loadResources = 0;
 	this.totalResources = 5
+	
+	this.waveFront,
+	this.waveBack,
+	this.clouds = undefined;
 		
 	//KILL VARS
 	this.killList = [];
 	this.killCount = -1;
 	this.killText = io.addToGroup('GUI', new iio.Text('',pxConv(300),this.cHeight-pxConv(30))
 	     .setFont(pxConv(30)+'px OpenSans')
-	     .setShadow('#b81519',4,4,0)
+	     .setShadow('#b81519',pxConv(2),pxConv(2),0)
 	     .setFillStyle('#dc4337'),20);
 	     
 	//SCORE VARS
 	this.score = -1;
 	this.scoreText = io.addToGroup('GUI', new iio.Text('',pxConv(40),pxConv(130))
 	     .setFont(pxConv(30)+'px OpenSans')
-	     .setShadow('grey',4,4,0)
+	     .setShadow('grey',pxConv(2),pxConv(2),0)
 	     .setFillStyle('white'),20);
 	
 	//TIME VARS
 	this.timerText = io.addToGroup('GUI', new iio.Text('Time 0 / 30',this.cWidth-pxConv(200),this.cHeight-pxConv(30))
 	     .setFont(pxConv(30)+'px OpenSans')
-	     .setShadow('#f0ca38',4,4,0)
+	     .setShadow('#f0ca38',pxConv(2),pxConv(2),0)
 	     .setFillStyle('#f6eb3c'),20);
 	     
 	this.timerOn = true;
@@ -51,6 +54,8 @@ function lvl1(io){
 	this.winAmmount = 4; 
 	this.MAX_CARS = 20;
 	this.timeOut = 30;
+	
+	this.water = [];
 	this.movers = [];
 	this.gameOver = false;
 	this.gameWin = false;
@@ -88,10 +93,16 @@ lvl1.prototype.setup = function(){
 	//SET IMAGE PATH
 	
 	//this.io.setBGImage(this.imgPath+'background1.png',false);
-	this.io.addToGroup('BACKGROUND',new iio.Rect(this.cWidth/2,this.cHeight/2,this.cWidth,this.cHeight).addImage(this.imgPath+'background1.png'),-10);
+	this.io.addToGroup('BACKGROUND',new iio.Rect(this.cWidth/2,this.cHeight/2,this.cWidth,this.cHeight).addImage(this.imgPath+'background1-skybox.png'),-30);
+			
+	this.clouds = this.io.addToGroup('BACKGROUND',new iio.Rect(this.cWidth,pxConv(90),pxConv(1557),pxConv(166)).addImage(this.imgPath+'clouds.png'),-20);
+		
+	this.io.addToGroup('BACKGROUND',new iio.Rect(this.cWidth/2,this.cHeight/2,this.cWidth,this.cHeight).addImage(this.imgPath+'background1-buildings.png'),-10);
+
 	
-	//this.io.setBGColor('green');
-	
+
+
+
 	this.loadResources++;  
 	//DEFINE WORLD FIXTURE
 	var fixDef = new b2FixtureDef;
@@ -124,56 +135,84 @@ lvl1.prototype.setup = function(){
 	]);
 	
 	bodyDef.position.Set(
-		pxConv(100,true)
+		pxConv(this.cWidth - 100,true)
 		,
-		pxConv(100,true)
+		pxConv(this.cHeight,true)
 	); 
-				
-				
-	//console.log(this.cHeight); //MAKE INTO FUNTION
-	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(255,255,255,.6)');
-	/*
-	for(var i = 0 ; i < fixDef.shape.m_vertexCount ; i++){
-	
-		this.io.addToGroup('coordsVerts',new iio.Rect(0,0,pxConv(5),pxConv(5))
-		.setPos((fixDef.shape.m_vertices[i].x + bodyDef.position.x) *PTM,(fixDef.shape.m_vertices[i].y + bodyDef.position.y)*PTM)
-		.setFillStyle('rgba(0,0,255,.7)'),90);
-		
-		this.io.addToGroup('coordsText',new iio.Text('x = ' + (fixDef.shape.m_vertices[i].x) * PTM + ' y = ' + (fixDef.shape.m_vertices[i].y) *PTM,(fixDef.shape.m_vertices[i].x + bodyDef.position.x) *PTM,(fixDef.shape.m_vertices[i].y + bodyDef.position.y) *PTM)
-		   .setFont(pxConv(10)+'px Consolas')
-		   .setTextAlign('center')
-		   .setFillStyle('black'),100);
-	}
-	*/
+	this.prepShape(bodyDef, fixDef).setFillStyle('#999');
 		
 	//GROUND LEFT
 	fixDef.shape.SetAsBox(pxConv(455,true),fixDef.shape.height);
 	bodyDef.position.Set(pxConv(50,true),this.cHeight/PTM - fixDef.shape.height);
-	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(255,255,255,.5)');
+	this.prepShape(bodyDef, fixDef).setFillStyle('#999');
 	
+	
+	var waveBack = this.io.addToGroup('BACKGROUND',new iio.Rect(750,this.cHeight,380,44).addImage(this.imgPath+'wave-back.png'),0);
+	var waveFront = this.io.addToGroup('WAVES',new iio.Rect(750,this.cHeight+5,504,59).addImage(this.imgPath+'wave-front.png'),11);
+	this.io.addToGroup('WAVES',new iio.Rect(pxConv(260),this.cHeight,pxConv(500),40).setFillStyle('#999'),12);//COVER
+	this.io.addToGroup('WAVES',new iio.Poly(this.cWidth - 100,this.cHeight, [
+										pxConv(-10), 0,
+										pxConv(35), pxConv(-20),
+										pxConv(100), pxConv(-20),
+										pxConv(100), 0
+											                                  
+	                                  ]).setFillStyle('#999'),12);//COVER
+	                                  
+	                     
+	              
+	new TWEEN.Tween( {y: this.cHeight+10 } )
+		.to( { y:this.cHeight}, 700 )
+		.easing( TWEEN.Easing.Quadratic.InOut)
+		.onUpdate( function () {
+			waveFront.pos.y = this.y;
+		} )
+		.yoyo( true )
+		.repeat( Infinity )
+		.start();
+		
+	new TWEEN.Tween( {y: this.cHeight - 5 } )
+		.to( { y:this.cHeight - 15}, 800 )
+		.easing( TWEEN.Easing.Quadratic.InOut)
+		.onUpdate( function () {
+			waveBack.pos.y = this.y;
+		} )
+		.yoyo( true )
+		.repeat( Infinity )
+		.start();
+		
+	//WATER(phyics)
+	
+	/*fixDef.userData = 'water';
+	bodyDef.position.Set(this.cWidth/PTM/2,this.cHeight/PTM/2);
+	fixDef.shape.SetAsBox(200/PTM,200/PTM);
+	fixDef.isSensor = true;
+	this.prepShape(bodyDef, fixDef)
+	.setFillStyle('rgba(0,0,0,1)');*/
+		
+		
 	
 	//KILLZONE(s)
 	fixDef.userData = 'killzone';
 	fixDef.isSensor = true;
-	fixDef.shape.SetAsBox(this.cWidth/PTM,pxConv(10,true));
-	bodyDef.position.Set(pxConv(200,true),this.cHeight/PTM+fixDef.shape.height);
+	fixDef.shape.SetAsBox(this.cWidth/PTM,10/PTM);
+	bodyDef.position.Set(200/PTM,this.cHeight/PTM+fixDef.shape.height+3);
 	this.prepShape(bodyDef, fixDef)
-	.setFillStyle('rgba(255,255,255,.8)');
+	.setFillStyle('rgba(0,0,0,1)');
 	
 	fixDef.userData = 'killzonecollect';
 	fixDef.isSensor = true;
 	fixDef.shape.SetAsBox(pxConv(10,true),this.cHeight/PTM);
-	bodyDef.position.Set((this.cWidth/PTM+10),this.cHeight/PTM);
+	bodyDef.position.Set(this.cWidth/PTM + pxConv(7),this.cHeight/PTM);
 	this.prepShape(bodyDef, fixDef)
-	.setFillStyle('rgba(0,0,0,.8)');
+	.setFillStyle('rgba(0,0,0,1)');
 	
 	//COLLECTOR
 	fixDef.userData = 'collect';
 	fixDef.isSensor = true;
-	fixDef.shape.SetAsBox(1,this.cHeight/PTM);
-	bodyDef.position.Set((this.cWidth/PTM+8),this.cHeight/PTM);
+	fixDef.shape.SetAsBox(pxConv(10,true),this.cHeight/PTM);
+	bodyDef.position.Set(this.cWidth/PTM + pxConv(3),this.cHeight/PTM);
 	this.prepShape(bodyDef, fixDef)
-	.setFillStyle('rgba(255,255,255,.8)');
+	.setFillStyle('rgba(100,255,155,.8)');
 	
 	//CONSTANT MOVER
 	fixDef.userData = 'constvel';
@@ -200,30 +239,27 @@ lvl1.prototype.setup = function(){
 	
 	
 	//CREATE WALL //LEFT
-	fixDef.shape.SetAsBox( pxConv(1,true),(this.cHeight - 240)/PTM);
+	fixDef.shape.SetAsBox( pxConv(1,true),(this.cHeight - pxConv(120))/PTM);
 	bodyDef.position.Set(0 , 0);
-	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(0,255,255,.8)');
+	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(0,255,255,.0)');
 	
 	//HOPPER //LEFT
 	fixDef.shape.SetAsBox(pxConv(10,true),this.cHeight/2/PTM);
 	bodyDef.position.Set(pxConv(-280,true),this.cHeight/2/PTM);
 	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(0,0,255,.8)');
 	
-	//HOPPER DOOR //LEFT
-	fixDef.shape.SetAsBox(pxConv(1,true),pxConv(110,true));
+	//HOPPER DOOR 
+	fixDef.shape.SetAsBox(pxConv(1,true),pxConv(50,true));
 	fixDef.userData = 'door';
-	bodyDef.position.Set(0, (this.cHeight-pxConv(130))/PTM);
+	bodyDef.position.Set(0, (this.cHeight-pxConv(70))/PTM);
 	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(255,0,255,1)');
 	
-	//HOPPER DOOR STOP //LEFT
-	fixDef.shape.SetAsBox(pxConv(1,true),pxConv(110,true));
+	//HOPPER DOOR STOP 
+	fixDef.shape.SetAsBox(pxConv(1,true),pxConv(50,true));
 	fixDef.userData = 'doorstop';
-	bodyDef.position.Set(pxConv(1,true), (this.cHeight-pxConv(130))/PTM);
+	bodyDef.position.Set(pxConv(1,true), (this.cHeight-pxConv(70))/PTM);
 	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(0,100,100,0.5)');
 	
-	//this.doorStop = this.io.addObj(world.CreateBody(bodyDef)).CreateFixture(fixDef);
-	//this.doorStop.GetShape().prepGraphics(this.io.b2Scale)
-	  //   .setFillStyle('rgba(255,255,255,.8)');
 	
 	fixDef.userData = undefined;
 	
@@ -231,14 +267,10 @@ lvl1.prototype.setup = function(){
 	fixDef.userData = 'blue';
 	fixDef.isSensor = true;
 	fixDef.shape.SetAsBox(pxConv(20,true),pxConv(80,true));
-	
 	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.height,(this.cHeight - pxConv(100))/PTM);
-	
 	var blueGoal = new goal(bodyDef,fixDef);
-	
 	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(0,186,255,.8)');
 	
-
 		
 	//YELLOW GOAL
 	fixDef.userData = 'yellow';
@@ -383,7 +415,7 @@ lvl1.prototype.createCar = function(x,y,color,type){
 		.setFillStyle('white'),100);
 	}*/
   
- 	this.prepShape(bodyDef, fixDef,'carObj',10).addImage(this.imgPath+'/'+color+'/'+ type + '.png');
+ 	this.prepShape(bodyDef, fixDef,'CARS',10).addImage(this.imgPath+'/'+color+'/'+ type + '.png');
 };
 
 lvl1.prototype.randomColor = function(){
@@ -395,7 +427,6 @@ lvl1.prototype.randomType = function(){
 
 //HELPER TO ADD BOX2D/IO OBJECTS
 lvl1.prototype.prepShape = function(bodyDef, fixDef,group,zIndex){
-	//io.addToGroup('GUI', new iio.Text('',300,this.cHeight-30)
 	if(!group){
 		group = 'worldObj';
 	}
@@ -442,7 +473,7 @@ lvl1.prototype.timer = function(){
 lvl1.prototype.kill = function(){
 	if(this.killList.length){
 		for (var i = 0, l = this.killList.length; i < l; ++i) {
-		    this.io.rmvFromGroup('carObj',this.killList[i]);
+		    this.io.rmvFromGroup('CARS',this.killList[i]);
 		    if(i != -1) {
 		    	this.killList.splice(i, 1);
 		    }
@@ -450,7 +481,11 @@ lvl1.prototype.kill = function(){
 	}
 }
 lvl1.prototype.step = function(){
-
+	if(this.gameOver == true){
+		//TWEEN.update();
+		//TWEEN.pause();
+	}
+	
 	this.timer();
 	this.kill();
 	var lio = this;
@@ -461,7 +496,16 @@ lvl1.prototype.step = function(){
 			lio.movers[i].SetLinearVelocity(new b2Vec2(lio.spawnSpeed,1));
 		}
 	}
-
+	
+	//WATER
+	if(lio.water.length){
+		for (var i = 0, l = lio.movers.length; i < l; ++i) {
+			lio.water[i].SetLinearVelocity(new b2Vec2(1,3));
+		}
+	}
+	//MOVE CLOUDS
+	this.clouds.pos.x += pxConv(-0.5);
+	
 	//MOVE BLOCKER
 	if(lio.blocker.GetBody().m_xf.position.y*PTM > lio.cHeight){
 		lio.blocker.GetBody().SetLinearVelocity(new b2Vec2(0,-3));
@@ -517,6 +561,10 @@ lvl1.prototype.step = function(){
 		if(contact.GetFixtureB().GetUserData() == 'constvel'){
 			lio.movers.push(contact.GetFixtureA().GetBody());
 		}
+		
+		if(contact.GetFixtureB().GetUserData() == 'water'){
+			lio.water.push(contact.GetFixtureA().GetBody());
+		}
 
 	}
 	
@@ -545,6 +593,15 @@ lvl1.prototype.step = function(){
 				lio.movers.splice(i, 1);
 			}
 		}
+		
+		if(contact.GetFixtureB().GetUserData() == 'water'){
+		
+			var i = lio.water.indexOf(contact.GetFixtureA().GetBody());
+			if(i != -1) {
+				lio.water.splice(i, 1);
+			}
+		}
+		
 		if(contact.GetFixtureB().GetUserData() == 'door'){
 			setTimeout(function() {
 				lio.createCar(-250/PTM,(lio.cHeight - 200)/PTM);

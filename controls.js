@@ -71,8 +71,8 @@ function GameControl(io) {
 	}
 	
 	 //Debugging 
-	scaleX = scaleY = 1;
-	//PIXEL_RATIO = 1;
+	//scaleX = scaleY = 1;
+	PIXEL_RATIO = 1;
 
 	createHiDPICanvas(1024, 768);
 	io.canvas.width = 1024*PIXEL_RATIO;
