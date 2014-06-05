@@ -5,8 +5,8 @@ var canvasOffset = {
     y: 0
 }; 
 var btn = null;
-var mouseX, mouseY, mousePVec, isMouseDown, selectedBody, mouseJoint;
-    
+var mouseX, mouseY,touchX,touchY, mousePVec, isMouseDown, selectedBody, mouseJoint;
+var touches = [];
 //load BOX2D classes
 var   b2Vec2 = Box2D.Common.Math.b2Vec2
 ,  	b2BodyDef = Box2D.Dynamics.b2BodyDef
@@ -122,9 +122,9 @@ function GameControl(io) {
 		}
 	
 		
-		if(mouseX > io.canvas.width/2/PTM){
+		if(mouseX > io.canvas.width/1.45/PTM){
 		//KILL BOX2D CLICK IF MORE THAN HALF THE SCREEN
-			//isMouseDown = false;
+			isMouseDown = false;
 		}
 		
 		if(isMouseDown && (!mouseJoint) && world) {
@@ -197,7 +197,6 @@ function GameControl(io) {
        mouseX = undefined;
        mouseY = undefined;
     }
-    
     
     function mouseMove(e){
       	mouseX = ((io.getEventPosition(e).x) / PTM*scaleX)*PIXEL_RATIO;
@@ -324,9 +323,7 @@ function gameOver(io){
 		} )
 		.delay(1000)
 		.start();
-		
-	
-	
+
 	io.pauseB2World(true);
 	io.pauseFramerate(true);
 }

@@ -11,8 +11,7 @@ function lvl1(io){
 	this.cWidth = io.canvas.width;
 	this.imgPath = 'img/';
 	this.loadResources = 0;
-	this.totalResources = 5
-	
+	this.totalResources = 5;
 	this.waveFront,
 	this.waveBack,
 	this.clouds = undefined;
@@ -20,23 +19,28 @@ function lvl1(io){
 	//KILL VARS
 	this.killList = [];
 	this.killCount = -1;
-	this.killText = io.addToGroup('GUI', new iio.Text('',pxConv(300),this.cHeight-pxConv(30))
+	/*this.killText = io.addToGroup('GUI', new iio.Text('',pxConv(300),this.cHeight-pxConv(30))
 	     .setFont(pxConv(30)+'px OpenSans')
 	     .setShadow('#b81519',pxConv(2),pxConv(2),0)
-	     .setFillStyle('#dc4337'),20);
+	     .setFillStyle('#dc4337'),20);*/
 	     
-	//SCORE VARS
-	this.score = -1;
-	this.scoreText = io.addToGroup('GUI', new iio.Text('',pxConv(40),pxConv(130))
-	     .setFont(pxConv(30)+'px OpenSans')
-	     .setShadow('grey',pxConv(2),pxConv(2),0)
-	     .setFillStyle('white'),20);
 	
-	//TIME VARS
-	this.timerText = io.addToGroup('GUI', new iio.Text('Time 0 / 30',this.cWidth-pxConv(200),this.cHeight-pxConv(30))
-	     .setFont(pxConv(30)+'px OpenSans')
-	     .setShadow('#f0ca38',pxConv(2),pxConv(2),0)
-	     .setFillStyle('#f6eb3c'),20);
+		//TIME VARS
+		this.lcd == this.io.addToGroup('GUI',new iio.Rect(pxConv(140),pxConv(50),254,71).addImage(this.imgPath+'lcd.png'),0);
+		this.timerText = io.addToGroup('GUI', new iio.Text('0',pxConv(40),pxConv(70))
+		     .setFont(pxConv(60)+'px digital-7')
+		     .setFillStyle('#333'),20);
+	     
+	 //SCORE VARS
+	 this.score = -1;
+	 
+	 io.addToGroup('GUI', new iio.Text('commuters',pxConv(120),pxConv(70))
+	      .setFont(pxConv(16)+'px OpenSans')
+	      .setFillStyle('#333'),20);
+	      
+	 this.scoreText = io.addToGroup('GUI', new iio.Text('',pxConv(150),pxConv(50))
+	      .setFont(pxConv(20)+'px OpenSans')
+	      .setFillStyle('#333'),20);
 	     
 	this.timerOn = true;
 	this.time = 0;
@@ -99,7 +103,7 @@ lvl1.prototype.setup = function(){
 		
 	this.io.addToGroup('BACKGROUND',new iio.Rect(this.cWidth/2,this.cHeight/2,this.cWidth,this.cHeight).addImage(this.imgPath+'background1-buildings.png'),-10);
 
-	
+	//BUTTON
 
 
 
@@ -266,8 +270,8 @@ lvl1.prototype.setup = function(){
 	//BLUE GOAL - BOTTOM
 	fixDef.userData = 'blue';
 	fixDef.isSensor = true;
-	fixDef.shape.SetAsBox(pxConv(20,true),pxConv(80,true));
-	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.height,(this.cHeight - pxConv(100))/PTM);
+	fixDef.shape.SetAsBox(pxConv(20,true),pxConv(105,true));
+	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.height,(this.cHeight - pxConv(125))/PTM);
 	var blueGoal = new goal(bodyDef,fixDef);
 	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(0,186,255,.8)');
 	
@@ -275,8 +279,8 @@ lvl1.prototype.setup = function(){
 	//YELLOW GOAL
 	fixDef.userData = 'yellow';
 	fixDef.isSensor = true;
-	fixDef.shape.SetAsBox(pxConv(20,true),pxConv(80,true));
-	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.height,pxConv(350,true));
+	fixDef.shape.SetAsBox(pxConv(20,true),pxConv(97,true));
+	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.height,pxConv(365,true));
 	var yellowGoal = new goal(bodyDef,fixDef);	
 	this.prepShape(bodyDef, fixDef).setFillStyle('rgba(255,255,0,.8)');
 	
@@ -300,16 +304,16 @@ lvl1.prototype.setup = function(){
 	//FLOOR1
 	fixDef.isSensor = false;
 	fixDef.userData = undefined;
-	fixDef.shape.SetAsBox(pxConv(20,true),pxConv(70,true));
+	fixDef.shape.SetAsBox(pxConv(20,true),pxConv(40,true));
 	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.height,pxConv(500	,true));
-	this.prepShape(bodyDef, fixDef).addImage(this.imgPath + 'block.png',function() {this.loadResources++;});
+	this.prepShape(bodyDef, fixDef);
 
 	//FLOOR 2
 	fixDef.isSensor = false;
 	fixDef.userData = undefined;
-	fixDef.shape.SetAsBox(pxConv(20,true),pxConv(40,true));
-	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.height,pxConv(230,true));
-	this.prepShape(bodyDef, fixDef).addImage(this.imgPath+'block.png',function() {this.loadResources++});
+	fixDef.shape.SetAsBox(pxConv(20,true),pxConv(39,true));
+	bodyDef.position.Set(this.cWidth/PTM-fixDef.shape.height,pxConv(229,true));
+	this.prepShape(bodyDef, fixDef);
 	
 	//MOVING WALL
 	this.blockerBodyDef.type = b2Body.b2_kinematicBody;
@@ -336,7 +340,7 @@ lvl1.prototype.setup = function(){
 	//this.createCar(this.cHeight/PTM/2,this.cWidth/PTM/2,'red','sedan');
 	
 	//INIT GUI
-	this.updateKills();
+	//this.updateKills();
 	this.updateScore();
 	
 	this.loadResources++;
@@ -347,9 +351,8 @@ lvl1.prototype.setup = function(){
 //CREATE CAR
 lvl1.prototype.createCar = function(x,y,color,type){
 			
-	//Define a fixture - used for cars
+	//Define a fixture - used for all cars
 	var fixDef = new b2FixtureDef;
-	fixDef.density = 5.0;
 	fixDef.friction = 0.3;
 	fixDef.restitution = 0.5;
 	
@@ -372,6 +375,7 @@ lvl1.prototype.createCar = function(x,y,color,type){
 	bodyDef.position.y = y;
 
 	if(type == 'mini'){
+		fixDef.density = 5.0;
 		fixDef.shape.SetAsArray([
 			new b2Vec2(pxConv(-210,true)/4, pxConv(-146,true)/4), 
 			new b2Vec2(pxConv(51,true)/4, pxConv(-146,true)/4), 
@@ -386,7 +390,6 @@ lvl1.prototype.createCar = function(x,y,color,type){
 		//fixDef.shape.SetAsBox(pxConv(241,true)/4,pxConv(146,true)/4);
 	} else if (type=='sedan') {
 		fixDef.density = 7.5;
-		
 		fixDef.shape.SetAsBox(pxConv(403,true)/4,pxConv(129,true)/4);
 	} else if (type=='van') {
 		fixDef.density = 10;
@@ -442,12 +445,12 @@ lvl1.prototype.prepShape = function(bodyDef, fixDef,group,zIndex){
 
 lvl1.prototype.updateScore = function(){
 	this.score++;
-	this.scoreText.setText('Commuters '+this.score+'/'+this.winAmmount);
+	this.scoreText.setText(this.score+'/'+this.winAmmount);
 };
 
 lvl1.prototype.updateKills = function(){
 	this.killCount++;
-	this.killText.setText('Murders '+this.killCount);
+	//this.killText.setText('Murders '+this.killCount);
 };
 
 lvl1.prototype.timer = function(){
@@ -463,7 +466,7 @@ lvl1.prototype.timer = function(){
 	  	//var minutes = Math.floor(this.elapsed / 60);
 	    //var seconds = this.elapsed - minutes * 60;
 	    
-	    this.timerText.setText('Time '+ Math.round(this.elapsed) + ' / ' + this.timeOut) 
+	    this.timerText.setText(Math.round(this.elapsed)) 
 	    
 	      
     }else{
@@ -482,7 +485,7 @@ lvl1.prototype.kill = function(){
 }
 lvl1.prototype.step = function(){
 	if(this.gameOver == true){
-		//TWEEN.update();
+		TWEEN.yoyo( false );
 		//TWEEN.pause();
 	}
 	
@@ -500,7 +503,15 @@ lvl1.prototype.step = function(){
 	//WATER
 	if(lio.water.length){
 		for (var i = 0, l = lio.movers.length; i < l; ++i) {
-			lio.water[i].SetLinearVelocity(new b2Vec2(1,3));
+			//Density
+			//console.log(lio.water[i].GetWorldCenter());
+			var setCenter = b2Vec2(0,0);
+			if(lio.water[i] > 0){
+				setCenter = lio.water[i].GetWorldCenter();
+			}
+			lio.water[i].ApplyForce(new b2Vec2(0,1000),setCenter);
+			//return false;
+			//lio.water[i].SetLinearVelocity(new b2Vec2(1,3));
 		}
 	}
 	//MOVE CLOUDS
