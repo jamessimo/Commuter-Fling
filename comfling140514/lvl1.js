@@ -14,6 +14,8 @@ function lvl1(io){
 	this.totalResources = 5;
 	this.waveFront,
 	this.waveBack,
+	this.waveAnimation1,
+	this.waveAnimation2,
 	this.clouds = undefined;
 		
 	//KILL VARS
@@ -23,7 +25,6 @@ function lvl1(io){
 	     .setFont(pxConv(30)+'px OpenSans')
 	     .setShadow('#b81519',pxConv(2),pxConv(2),0)
 	     .setFillStyle('#dc4337'),20);*/
-	     
 	
 		//TIME VARS
 		this.lcd == this.io.addToGroup('GUI',new iio.Rect(pxConv(140),pxConv(50),254,71).addImage(this.imgPath+'lcd.png'),0);
@@ -63,6 +64,7 @@ function lvl1(io){
 	this.movers = [];
 	this.gameOver = false;
 	this.gameWin = false;
+	this.pause = false;
 	
 	this.blocker = undefined;
 	this.blockerDirection = 'down';
@@ -103,10 +105,7 @@ lvl1.prototype.setup = function(){
 		
 	this.io.addToGroup('BACKGROUND',new iio.Rect(this.cWidth/2,this.cHeight/2,this.cWidth,this.cHeight).addImage(this.imgPath+'background1-buildings.png'),-10);
 
-	//BUTTON
-
-
-
+	
 	this.loadResources++;  
 	//DEFINE WORLD FIXTURE
 	var fixDef = new b2FixtureDef;
@@ -164,7 +163,7 @@ lvl1.prototype.setup = function(){
 	                                  
 	                     
 	              
-	new TWEEN.Tween( {y: this.cHeight+10 } )
+	this.waveAnimation1 = new TWEEN.Tween( {y: this.cHeight+10 } )
 		.to( { y:this.cHeight}, 700 )
 		.easing( TWEEN.Easing.Quadratic.InOut)
 		.onUpdate( function () {
@@ -174,7 +173,7 @@ lvl1.prototype.setup = function(){
 		.repeat( Infinity )
 		.start();
 		
-	new TWEEN.Tween( {y: this.cHeight - 5 } )
+	this.waveAnimation2 = new TWEEN.Tween( {y: this.cHeight - 5 } )
 		.to( { y:this.cHeight - 15}, 800 )
 		.easing( TWEEN.Easing.Quadratic.InOut)
 		.onUpdate( function () {
@@ -192,8 +191,6 @@ lvl1.prototype.setup = function(){
 	fixDef.isSensor = true;
 	this.prepShape(bodyDef, fixDef)
 	.setFillStyle('rgba(0,0,0,1)');*/
-		
-		
 	
 	//KILLZONE(s)
 	fixDef.userData = 'killzone';
@@ -455,8 +452,9 @@ lvl1.prototype.updateKills = function(){
 
 lvl1.prototype.timer = function(){
 	
-	if(this.timerOn){
-		this.time = new Date().getTime() - this.startTime;
+	if(this.timerOn && this.pause == false){
+		var lockTime = new Date().getTime()
+		this.time = lockTime - this.startTime;
 	
 	    this.elapsed = Math.floor(this.time / 100) / 10;
 	    if(Math.round(this.elapsed) == this.elapsed) { 
@@ -484,12 +482,14 @@ lvl1.prototype.kill = function(){
 	}
 }
 lvl1.prototype.step = function(){
-	if(this.gameOver == true){
-		TWEEN.yoyo( false );
-		//TWEEN.pause();
-	}
+
+	if(this.pause == true){
+		this.timerOn = false;
 	
+	}	
+	//console.log('tick');
 	this.timer();
+	
 	this.kill();
 	var lio = this;
 

@@ -4,8 +4,10 @@ var canvasOffset = {
     x: 0,
     y: 0
 }; 
-var btn = null;
-var mouseX, mouseY,touchX,touchY, mousePVec, isMouseDown, selectedBody, mouseJoint;
+var btn, pauseBtn, unPauseBtn,
+menuTween
+ = null;
+var mouseX, mouseY,touchX,touchY, mousePVec, isMouseDown, selectedBody, mouseJoint, jointEffect, clickedObjCenter;
 var touches = [];
 //load BOX2D classes
 var   b2Vec2 = Box2D.Common.Math.b2Vec2
@@ -25,7 +27,7 @@ var   b2Vec2 = Box2D.Common.Math.b2Vec2
 ,   b2AABB = Box2D.Collision.b2AABB;
 
 var PTM = 30;
-var FPS = 60;
+var FPS = 20;
 var world = new b2World(new b2Vec2(0, 0),true);
 var listener = new b2Listener;
 var level = undefined;
@@ -116,7 +118,12 @@ function GameControl(io) {
 			}
 			else if(level.gameWin==true){
 				winGame(io);
-			}else{
+			}
+			else if(level.pause==true){
+				pause(io);
+				//level.waveAnimation1.stop(true);
+			}
+			else{
 				level.step();
 			}
 		}
@@ -126,9 +133,10 @@ function GameControl(io) {
 		//KILL BOX2D CLICK IF MORE THAN HALF THE SCREEN
 			isMouseDown = false;
 		}
-		
+
 		if(isMouseDown && (!mouseJoint) && world) {
 		  var body = getB2BodyAt(mouseX,mouseY);
+		
 		  if(body) {
 		     var md = new b2MouseJointDef();
 		     md.bodyA = world.GetGroundBody();
@@ -136,16 +144,33 @@ function GameControl(io) {
 		     md.target.Set(mouseX, mouseY);
 		     md.collideConnected = true;
 		     md.maxForce = 600.0 * body.GetMass();
-		     mouseJoint = io.addToGroup('MOUSEJOINT',world.CreateJoint(md).prepGraphics().setStrokeStyle('white').setLineWidth(1));
+		     mouseJoint = world.CreateJoint(md);
+		     
+		     clickedObjCenter = md.bodyB.m_xf.position
+		     jointEffect = io.addToGroup('MOUSEJOINT', new iio.Circle(mouseX*PTM, mouseY*PTM,60).setFillStyle('rgba(255,255,255,0.2)'));
+		     //console.log(jointEffect);
+		     new TWEEN.Tween( {y: 0 } )
+		     	.to( { x:60}, 1000 )
+		     	.easing( TWEEN.Easing.Elastic.Out)
+		     	.onUpdate( function () {
+		     		jointEffect.radius = this.x;
+		     	})
+		     	.start();
+		     
+	
 		     body.SetAwake(true);
 		  }
 		}
 		if(mouseJoint) {
 		  if(isMouseDown) {
-		     mouseJoint.SetTarget(new b2Vec2(mouseX, mouseY));
+		    mouseJoint.SetTarget(new b2Vec2(mouseX, mouseY));
+		     
+		   	jointEffect.pos = new b2Vec2(mouseX*PTM, mouseY*PTM);
+		   
 		  } else {
 		     world.DestroyJoint(mouseJoint);
 		     io.rmvObj(mouseJoint);
+		     io.rmvObj(jointEffect);
 		     mouseJoint = null;
 		  }
 		}
@@ -199,30 +224,39 @@ function GameControl(io) {
     }
     
     function mouseMove(e){
-      	mouseX = ((io.getEventPosition(e).x) / PTM*scaleX)*PIXEL_RATIO;
-       	mouseY = ((io.getEventPosition(e).y) / PTM*scaleY)*PIXEL_RATIO; 
+      	mouseX = pxConv(io.getEventPosition(e).x,true)*scaleX;
+       	mouseY = pxConv(io.getEventPosition(e).y,true)*scaleY; 
     }
     
     function touchMove(e){
-    	mouseX = (e.touches[0].pageX) / PTM*scaleX*PIXEL_RATIO;
-    	mouseY = (e.touches[0].pageY) / PTM*scaleY*PIXEL_RATIO;
+    	mouseX = pxConv(e.touches[0].pageX,true)*scaleX;
+    	mouseY = pxConv(e.touches[0].pageY,true)*scaleY;
+    	
+    	for( var i=0; i< e.changedTouches.length; i++ ) {
+    	   console.log('touch ' + e.changedTouches[i].identifier);
+    	   console.log('x ' + e.changedTouches[i].pageX);
+    	   console.log('y ' + e.changedTouches[i].pageY);
+    	}
     }
     
-    function pause(){
-    	io.pauseB2World();
-    	io.pauseFramerate();
-    	console.log('pause button called');
-    }
-    
-	//TOUCH EVENTS
+    //TOUCH EVENTS
 	io.canvas.addEventListener('touchstart', function(e){
 		touchStart(e);
 		var newPos = io.getEventPosition(e);
 		newPos.x = e.touches[0].pageX*scaleX;
 		newPos.y = e.touches[0].pageY*scaleY;
+		
+		
+		
+		
 		if (btn && btn.contains(newPos)){
 			createWorld(io);
 		}
+		if(pauseBtn && pauseBtn.contains(newPos)){
+			level.pause = true;
+		}
+		
+		
 	});
 	io.canvas.addEventListener('touchmove', touchMove);
 	io.canvas.addEventListener('touchend', touchEnd);
@@ -233,18 +267,61 @@ function GameControl(io) {
 	io.canvas.addEventListener('mousedown', function(e){
 		mouseDown(e);
 		var newPos = io.getEventPosition(e);
-		newPos.x = io.getEventPosition(e).x*scaleX*PIXEL_RATIO;
-		newPos.y = io.getEventPosition(e).y*scaleY*PIXEL_RATIO;
+		newPos.x = pxConv(io.getEventPosition(e).x)*scaleX;
+		newPos.y = pxConv(io.getEventPosition(e).y)*scaleY;
         if (btn && btn.contains(newPos)){
         	createWorld(io);
         }
+        if(pauseBtn && pauseBtn.contains(newPos)){
+       		level.pause = true;	
+        }
+      if(unPauseBtn && unPauseBtn.contains(newPos)){
+      		resume(io);	
+      }
     });
 
     this.focusOff = function(e){
        mouseUp(e);
  	}
+ 	
     
 };
+
+function pause(io){
+	level.pause = true
+    //level.pause = true;
+	io.pauseB2World(true);
+	io.pauseFramerate(true);
+		
+	gameoverText = io.addToGroup('MENU',(new iio.Text('- PAUSED -',iio.Vec.add(io.canvas.width/2,io.canvas.height/2-pxConv(40),0,0)))
+		.setFont(pxConv(60)+'px OpenSans')
+		.setTextAlign('center')
+		.setFillStyle('white'),20);
+
+	unPauseBtn = io.addToGroup('MENU',new iio.Rect(io.canvas.width/2, io.canvas.height/2, pxConv(160), pxConv(60))
+		.setRoundingRadius(20)
+		.setStrokeStyle('#4385f6').setLineWidth(2)
+		.setFillStyle('#4385f6'),20);
+		
+	unPauseBtn.text = io.addToGroup('MENU', new iio.Text('resume',unPauseBtn.pos)
+		.setFont(pxConv(30)+'px OpenSans')
+		.translate(0,pxConv(9))
+		.setTextAlign('center')
+		.setFillStyle('white'),20);
+}
+function resume(io){
+
+	gameoverText = null;
+
+	io.rmvFromGroup('MENU');
+	unPauseBtn = undefined; //To remove its POS
+	io.pauseB2World(false);
+	io.pauseFramerate(false);
+	level.pause = false;
+	
+	console.log('un pause game');
+}
+
 
 function winGame(io){
 	gameOn = false;
@@ -365,35 +442,18 @@ function intro(io){
 		.delay(1000)
 		.start();
 				
-	new TWEEN.Tween( { x: 0, y: io.canvas.height,rotation:-360})
-		.to( { x: io.canvas.width/2,y: io.canvas.height/2 + 150,rotation:25}, 1000 )
+	new TWEEN.Tween( { x: 0, y: io.canvas.height})
+		.to( { x: io.canvas.width/2,y: io.canvas.height/2 + 150}, 1000 )
 		.easing( TWEEN.Easing.Bounce.Out)
 		.onUpdate( function () {
 			if(btn){
 				btn.pos.y = this.y;
 				btn.text.pos.y = this.y;
 				btn.text.translate(0,pxConv(9));
-				//btn.rotate(this.rotation);
-				//btn.text.rotate(this.rotation);
-				
 			}
 		} )
-		//.repeat( Infinity )
 		.delay(2000)
 		.start();
-		
-		/*new TWEEN.Tween( {rotation:0})
-			.to( {rotation:25}, 1000 )
-			.onUpdate( function () {
-				if(btn){
-					btn.rotate(this.rotation);
-				}
-			} )
-			.repeat( 6 )
-			.start();*/
-	        	        
-	//  gameOn = false;
-      
 }
 function createWorld(io){
 	gameOn = true;
@@ -412,6 +472,10 @@ function createWorld(io){
 	world.SetContactListener(listener);
 	
 	level.setup();
+	
+	//pause BUTTON
+	pauseBtn = io.addToGroup('MENU',new iio.Rect(pxConv(242),pxConv(50), pxConv(50), pxConv(50)),20);
+	
 	
 	io.pauseB2World(false);
 	io.pauseFramerate(false);
