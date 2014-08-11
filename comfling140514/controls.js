@@ -27,7 +27,7 @@ var   b2Vec2 = Box2D.Common.Math.b2Vec2
 ,   b2AABB = Box2D.Collision.b2AABB;
 
 var PTM = 30;
-var FPS = 20;
+var FPS = 60;
 var world = new b2World(new b2Vec2(0, 0),true);
 var listener = new b2Listener;
 var level = undefined;
@@ -233,6 +233,8 @@ function GameControl(io) {
     	mouseY = pxConv(e.touches[0].pageY,true)*scaleY;
     	
     	for( var i=0; i< e.changedTouches.length; i++ ) {
+    	
+    		touches[e.changedTouches[i].identifier] = 
     	   console.log('touch ' + e.changedTouches[i].identifier);
     	   console.log('x ' + e.changedTouches[i].pageX);
     	   console.log('y ' + e.changedTouches[i].pageY);

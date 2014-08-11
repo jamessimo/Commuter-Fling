@@ -60,7 +60,7 @@ function lvl1(io){
 	this.MAX_CARS = 20;
 	this.timeOut = 30;
 	
-	this.water = [];
+		this.water = [];
 	this.movers = [];
 	this.gameOver = false;
 	this.gameWin = false;
@@ -323,9 +323,11 @@ lvl1.prototype.setup = function(){
 	//this.blocker = this.prepShape(this.blockerBodyDef, this.blockerFixDef).addImage('img/block.png',function() {this.loadResources++});
 	this.blocker = this.io.addObj(world.CreateBody(this.blockerBodyDef)).CreateFixture(this.blockerFixDef);
     
+
+
    	this.blocker.GetBody().SetLinearVelocity(new b2Vec2(0,3));
     this.blocker.GetShape().prepGraphics(this.io.b2Scale).addImage(this.imgPath + 'block.png',function() {this.loadResources++});
-         
+        console.log(this.blocker);     
     //this.blocker.m_shape.fadeOut(1,1);
 		
 	fixDef.isSensor = false;

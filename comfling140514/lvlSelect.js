@@ -1,7 +1,7 @@
 (function(){
 //Definition
 
-function lvlSelect(io){
+function lvl1(io){
 	//CANVAS VARS
 	this.io = io;
 	this._io = io;

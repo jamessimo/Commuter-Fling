@@ -296,8 +296,6 @@ function gameOver(io){
 		} )
 		.delay(1000)
 		.start();
-		
-	
 	
 	io.pauseB2World(true);
 	io.pauseFramerate(true);
